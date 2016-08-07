@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "bufio"
+    "regexp"
     "os"
 )
 
@@ -11,6 +12,8 @@ type LogReader struct{
     TotalLines uint
     FirstSeen string
     LastSeen string
+    RegexAction *regexp.Regexp
+    RegexMessage *regexp.Regexp
 }
 
 func (lr *LogReader) LoadFile(path string) bool {
@@ -28,20 +31,27 @@ func (lr *LogReader) LoadFile(path string) bool {
     // Loop over all found lines and analyse them
     for scanner.Scan() {
         line := scanner.Text()
-        fmt.Println(line)
+        lr.ParseLine(line)
         lr.TotalLines++
     }
     return true;
 }
 
+func (lr *LogReader) ParseLine(line string) {
+
+    fmt.Println("Parsing Line: [" + line + "]")
+    fmt.Println("Is action: ", lr.RegexAction.MatchString(line))
+    fmt.Println("Is message: ", lr.RegexMessage.MatchString(line))    
+    fmt.Println("")
+}
+
 func main() {
+    lr := LogReader{RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`), RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`)}
+    lr.LoadFile("irctest.log") 
 
-   lr := LogReader{}
-   lr.LoadFile("irctest.log")
+    u := NewUser("Simon", "Today")
+    fmt.Printf("%v\n", lr)
 
-   u := NewUser("Simon", "Today")
-   fmt.Printf("%v\n", lr)
-
-   u.CalculateTotals()
-   fmt.Printf("%v\n", u)
+    u.CalculateTotals()
+    fmt.Printf("%v\n", u)
 }

@@ -16,8 +16,8 @@ type User struct {
     FirstSeen string
     LastSeen string
     MaxHours uint
-    Hours [23]uint    // 24 hours
-    Days  []uint      // total days seen
+    Hours [23]uint          // 24 hours
+    Days  map[string]string // total days seen
     Words []string
 }
 
