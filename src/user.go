@@ -13,11 +13,11 @@ type User struct {
     WordsDay uint
     Vocabulary uint
     DaysTotal uint
-    FirstSeen string
-    LastSeen string
+    FirstSeen int64
+    LastSeen int64
     MaxHours uint
     Hours [23]uint          // 24 hours
-    Days  map[string]string // total days seen
+    Days  map[string]uint   // total days seen
     Words []string
 }
 
@@ -34,17 +34,20 @@ func (u *User) CalculateTotals() {
     // @todo finish
 }
 
-func NewUser(nick string, timestamp string ) *User {
+func NewUser(nick string, timestamp int64) User {
     var (
         hours [23]uint
         i uint
+        days map[string]uint
     )
 
     for i = 0; i < 23; i++ {
         hours[i] = 0
     }
 
-    u := User{Username: nick, FirstSeen: timestamp, LastSeen: timestamp, Hours: hours}
-    return &u
+    days = make(map[string]uint)
+
+    u := User{Username: nick, FirstSeen: timestamp, LastSeen: timestamp, Hours: hours, Days: days}
+    return u
 }
 
