@@ -13,6 +13,9 @@ LDFLAGS=-ldflags "-X main.Version ${VERSION} -X main.BuildTime ${BUILD}"
 build:
 	go build ${LDFLAGS} -o ${BINARY}
 
+run:
+	go build ${LDFLAGS} -o ${BINARY} && ./${BINARY}
+
 # Install the project and copy binary
 install:
 	go install ${LDFLAGS} -o ${BINARY}
