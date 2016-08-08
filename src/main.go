@@ -10,12 +10,20 @@ import (
     "os"
 )
 
+type Channel struct{
+    UserCount uint
+    LineCount uint
+    WordCount uint
+    MaxDay uint
+    Mean int64
+    First int64
+    Last int64
+}
+
 type LogReader struct{
+    Channel Channel
     Users map[string]User
-    TotalLines uint
     LastGenerated int64
-    FirstSeen string
-    LastSeen string
     RegexAction *regexp.Regexp
     RegexMessage *regexp.Regexp
     RegexParseAction *regexp.Regexp
@@ -70,9 +78,8 @@ func (lr *LogReader) LoadFile(path string) bool {
         } else if lr.RegexMessage.MatchString(line) == true {
             lr.ParseLine(line, false)
         } else {
-            fmt.Printf("error reading line [%i]\n", lr.TotalLines)
+            fmt.Printf("error reading line [%i]\n", lr.Channel.LineCount)
         }
-        lr.TotalLines++
     }
     return true;
 }
@@ -113,7 +120,7 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     }
 
     // Parse nick and check against ignore list
-    lineNick := strings.Trim(parsed[0][2], " ")
+    lineNick := strings.Trim(strings.ToLower(parsed[0][2]), " ")
     // @todo check against ignore list
 
     // Parse message
@@ -127,7 +134,6 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     // Get user, if not found make a new user
     if lr.HasUser(lineNick) == true {
         user,_ = lr.GetUser(lineNick)
-        user.LastSeen = lineTime.Unix()
     }else{
         user = NewUser(lineNick, lineTime.Unix())
     }
@@ -136,23 +142,51 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     lineMessageWords := strings.Split(strings.ToLower(lineMessage), " ")
     lineMessageWordCount := len(lineMessageWords)
 
+    user.Words = append(user.Words, lineMessageWords...)
+
+    lr.Channel.LineCount++
     user.LineCount++
+
     user.WordCount += uint(lineMessageWordCount)
+    lr.Channel.WordCount += uint(lineMessageWordCount)
     user.CharCount += uint(lineMessageCharCount)
     
+    // Increment Days
     if _, ok := user.Days[lineTime.Format("2006-02-01")]; ok {
         user.Days[lineTime.Format("2006-01-02")]++
     }else{
         user.Days[lineTime.Format("2006-01-02")] = 1
     }
 
+    // Incremember Hours
     user.Hours[uint(lineTime.Hour())]++
+
+    // Set first and last seen timestamps
+    if user.FirstSeen > lineTime.Unix() {
+        user.FirstSeen = lineTime.Unix()
+    }
+
+    if user.LastSeen < lineTime.Unix() {
+        user.LastSeen = lineTime.Unix()
+    }
+
+    if lr.Channel.First == 0 {
+        lr.Channel.First = lineTime.Unix()
+    }
+
+    if lr.Channel.Last == 0 {
+        lr.Channel.Last = lineTime.Unix()
+    }
+
+    if lr.Channel.First > lineTime.Unix() {
+        lr.Channel.First = lineTime.Unix()
+    }
+
+    if lr.Channel.Last < lineTime.Unix() {
+        lr.Channel.Last = lineTime.Unix()
+    } 
         
     lr.SetUser(lineNick, user)
-    fmt.Printf("%v\n", lineMessageCharCount)
-    fmt.Printf("%v\n", lineMessageWords)
-    fmt.Printf("%v\n", lineNick)
-
     return true
 }
 
@@ -167,9 +201,6 @@ func main() {
 
     lr.LoadFile("irctest.log") 
 
-    //u := NewUser("Simon", "Today")
-    //fmt.Printf("%v\n", lr)
-
     //u.CalculateTotals()
-    fmt.Printf("%v\n", lr.Users)
+    fmt.Printf("%v\n", lr)
 }
