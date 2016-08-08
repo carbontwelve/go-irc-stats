@@ -31,8 +31,8 @@ type Database struct{
  * @param path string
  * @return error|nil
  */
-func (this *Database) Load(path string) (err error)  {
-    this.Users = make(map[string]User)
+func (d *Database) Load(path string) (err error)  {
+    d.Users = make(map[string]User)
 
     fh, err := os.Open(path)
     if err != nil {
@@ -41,7 +41,7 @@ func (this *Database) Load(path string) (err error)  {
 
     dec := gob.NewDecoder(fh)
 
-    err = dec.Decode(this)
+    err = dec.Decode(d)
     if err != nil {
         return err
     }
@@ -49,11 +49,11 @@ func (this *Database) Load(path string) (err error)  {
     return
 }
 
-func (this Database) Save(path string) (err error)  {
+func (d Database) Save(path string) (err error)  {
     b := new(bytes.Buffer)
     enc := gob.NewEncoder(b)
 
-    err = enc.Encode(this)
+    err = enc.Encode(d)
     if err != nil {
         return err
     }
@@ -73,29 +73,29 @@ func (this Database) Save(path string) (err error)  {
     return nil
 }
 
-func (this *Database) AddUser(u User) {
-    if this.HasUser(u.Username) == true {
+func (d *Database) AddUser(u User) {
+    if d.HasUser(u.Username) == true {
         panic("Adding a user that already exists in database")
     }
-    this.SetUser(u.Username, u)
+    d.SetUser(u.Username, u)
 }
 
-func (this Database) HasUser(nick string) bool {
-    if _, ok := this.Users[nick]; ok {
+func (d Database) HasUser(nick string) bool {
+    if _, ok := d.Users[nick]; ok {
         return true
     }
     return false
 }
 
-func (this *Database) SetUser(nick string, u User) {
-    this.Users[nick] = u
+func (d *Database) SetUser(nick string, u User) {
+    d.Users[nick] = u
 }
 
-func (this Database) GetUser(nick string) (user User, err error) {
-    if this.HasUser(nick) == false {
+func (d Database) GetUser(nick string) (user User, err error) {
+    if d.HasUser(nick) == false {
         err = errors.New("User doesn't exist")
         return
     }
-    user = this.Users[nick]
+    user = d.Users[nick]
     return
 }
