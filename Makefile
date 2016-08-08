@@ -13,8 +13,13 @@ LDFLAGS=-ldflags "-X main.Version ${VERSION} -X main.BuildTime ${BUILD}"
 build:
 	go build ${LDFLAGS} -o ${BINARY}
 
+# Run the project
 run:
 	go build ${LDFLAGS} -o ${BINARY} && ./${BINARY}
+
+# Clean up and run
+clean-run:
+	make clean && make run
 
 # Install the project and copy binary
 install:
@@ -23,5 +28,6 @@ install:
 # Cleans our project and deleted binary
 clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
+	if [ -f "db.bin" ] ; then rm "db.bin" ; fi
 
 .PHONY: clean install

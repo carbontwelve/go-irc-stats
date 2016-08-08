@@ -2,7 +2,6 @@ package main
 
 import (
     "fmt"
-    "errors"
     "bufio"
     "regexp"
     "strings"
@@ -17,40 +16,10 @@ var (
 
 type LogReader struct{
     Database Database
-    Channel Channel
-    Users map[string]User
-    LastGenerated int64
     RegexAction *regexp.Regexp
     RegexMessage *regexp.Regexp
     RegexParseAction *regexp.Regexp
     RegexParseMessage *regexp.Regexp
-}
-
-func (lr *LogReader) AddUser(u User) {
-    if lr.HasUser(u.Username) == true {
-        panic("Adding a user that already exists in database")
-    }
-    lr.SetUser(u.Username, u)
-}
-
-func (lr LogReader) HasUser(nick string) bool {
-    if _, ok := lr.Users[nick]; ok {        
-        return true
-    }
-    return false
-}
-
-func (lr *LogReader) SetUser(nick string, u User) {
-    lr.Users[nick] = u
-}
-
-func (lr LogReader) GetUser(nick string) (user User, err error) {
-    if lr.HasUser(nick) == false {
-        err = errors.New("User doesn't exist")
-        return
-    }
-    user = lr.Users[nick] 
-    return
 }
 
 func (lr *LogReader) LoadFile(path string) bool {  
@@ -72,9 +41,12 @@ func (lr *LogReader) LoadFile(path string) bool {
         } else if lr.RegexMessage.MatchString(line) == true {
             lr.ParseLine(line, false)
         } else {
-            fmt.Printf("error reading line [%i]\n", lr.Channel.LineCount)
+            fmt.Printf("error reading line [%i]\n", lr.Database.Channel.LineCount)
         }
     }
+
+    lr.Database.LastGenerated = time.Now().Unix()
+
     return true;
 }
 
@@ -96,7 +68,7 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     var parsed[][]string
     var user User
 
-    fmt.Println("Parsing Line: [" + line + "]\n\n")
+    //fmt.Println("Parsing Line: [" + line + "]\n\n")
     // timestamp = [0][1]
     // nick = [0][2]
     // message/action = [0][3]
@@ -108,7 +80,7 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
     // Convert timestamp into unix timestamp
     lineTime := lr.ParseTime(parsed[0][1])
-    if lineTime.Unix() < lr.LastGenerated {
+    if lineTime.Unix() < lr.Database.LastGenerated {
         return false
     }
 
@@ -125,8 +97,8 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     }
 
     // Get user, if not found make a new user
-    if lr.HasUser(lineNick) == true {
-        user,_ = lr.GetUser(lineNick)
+    if lr.Database.HasUser(lineNick) == true {
+        user,_ = lr.Database.GetUser(lineNick)
     }else{
         user = NewUser(lineNick, lineTime.Unix())
     }
@@ -137,11 +109,11 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
     user.Words = append(user.Words, lineMessageWords...)
 
-    lr.Channel.LineCount++
+    lr.Database.Channel.LineCount++
     user.LineCount++
 
     user.WordCount += uint(lineMessageWordCount)
-    lr.Channel.WordCount += uint(lineMessageWordCount)
+    lr.Database.Channel.WordCount += uint(lineMessageWordCount)
     user.CharCount += uint(lineMessageCharCount)
     
     // Increment Days
@@ -163,23 +135,23 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
         user.LastSeen = lineTime.Unix()
     }
 
-    if lr.Channel.First == 0 {
-        lr.Channel.First = lineTime.Unix()
+    if lr.Database.Channel.First == 0 {
+        lr.Database.Channel.First = lineTime.Unix()
     }
 
-    if lr.Channel.Last == 0 {
-        lr.Channel.Last = lineTime.Unix()
+    if lr.Database.Channel.Last == 0 {
+        lr.Database.Channel.Last = lineTime.Unix()
     }
 
-    if lr.Channel.First > lineTime.Unix() {
-        lr.Channel.First = lineTime.Unix()
+    if lr.Database.Channel.First > lineTime.Unix() {
+        lr.Database.Channel.First = lineTime.Unix()
     }
 
-    if lr.Channel.Last < lineTime.Unix() {
-        lr.Channel.Last = lineTime.Unix()
+    if lr.Database.Channel.Last < lineTime.Unix() {
+        lr.Database.Channel.Last = lineTime.Unix()
     } 
         
-    lr.SetUser(lineNick, user)
+    lr.Database.SetUser(lineNick, user)
     return true
 }
 
@@ -191,18 +163,19 @@ func main() {
     db := Database{}
     db.Load("db.bin")
 
+    fmt.Println("Last Parsed: ", db.LastGenerated)
+
     lr := LogReader{
         RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
         RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
         RegexParseAction: regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`), 
         RegexParseMessage: regexp.MustCompile(`^\[(.+)\] <(\S+)> (.+)$`),
-        Users: make(map[string]User),
 	Database: db,
     }
 
     lr.LoadFile("irctest.log") 
 
-    db.Save("db.bin")
+    lr.Database.Save("db.bin")
 
     //u.CalculateTotals()
     fmt.Printf("%v\n", lr)
