@@ -10,6 +10,11 @@ import (
     "os"
 )
 
+var (
+    Version string
+    BuildTime string
+)
+
 type LogReader struct{
     Database Database
     Channel Channel
@@ -179,6 +184,10 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 }
 
 func main() {
+
+    fmt.Println("Version: ", Version)
+    fmt.Println("Build Time: ", BuildTime)
+
     db := Database{}
     db.Load("db.bin")
 
