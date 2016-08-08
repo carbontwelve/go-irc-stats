@@ -99,3 +99,8 @@ func (d Database) GetUser(nick string) (user User, err error) {
     user = d.Users[nick]
     return
 }
+
+func (d *Database) Calculate() {
+    // Set Channel User counter
+    d.Channel.UserCount = uint(len(d.Users))
+}

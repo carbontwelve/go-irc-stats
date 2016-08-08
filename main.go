@@ -80,8 +80,11 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
     // Convert timestamp into unix timestamp
     lineTime := lr.ParseTime(parsed[0][1])
-    if lineTime.Unix() < lr.Database.LastGenerated {
+    if lineTime.Unix() <= lr.Database.Channel.Last {
+	fmt.Println("Ignoring line")
         return false
+    }else{
+        fmt.Printf("Parsing line: [%i] > [%i] \n", lineTime.Unix(), lr.Database.Channel.Last)
     }
 
     // Parse nick and check against ignore list
@@ -173,10 +176,17 @@ func main() {
 	Database: db,
     }
 
+    // Load log file and parse any new lines
     lr.LoadFile("irctest.log") 
 
+    // Get Database to calculate stats and totals
+    lr.Database.Calculate()
+
+    fmt.Printf("Last line date [%i]\n", lr.Database.Channel.Last)
+
+    // Once we are finished dump to disk cache file
     lr.Database.Save("db.bin")
 
     //u.CalculateTotals()
-    fmt.Printf("%v\n", lr)
+    fmt.Printf("%v\n", lr.Database)
 }
