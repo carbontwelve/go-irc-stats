@@ -10,17 +10,8 @@ import (
     "os"
 )
 
-type Channel struct{
-    UserCount uint
-    LineCount uint
-    WordCount uint
-    MaxDay uint
-    Mean int64
-    First int64
-    Last int64
-}
-
 type LogReader struct{
+    Database Database
     Channel Channel
     Users map[string]User
     LastGenerated int64
@@ -57,8 +48,7 @@ func (lr LogReader) GetUser(nick string) (user User, err error) {
     return
 }
 
-func (lr *LogReader) LoadFile(path string) bool {
-    
+func (lr *LogReader) LoadFile(path string) bool {  
     // Open the file
     f, err := os.Open(path)
 
@@ -72,7 +62,6 @@ func (lr *LogReader) LoadFile(path string) bool {
     // Loop over all found lines and analyse them
     for scanner.Scan() {
         line := scanner.Text()
-
         if lr.RegexAction.MatchString(line) == true {
             lr.ParseLine(line, true)            
         } else if lr.RegexMessage.MatchString(line) == true {
@@ -99,7 +88,6 @@ func (lr LogReader) IsUserIgnored(username string) bool {
 }
 
 func (lr *LogReader) ParseLine(line string, isAction bool) bool {
-
     var parsed[][]string
     var user User
 
@@ -191,15 +179,21 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 }
 
 func main() {
+    db := Database{}
+    db.Load("db.bin")
+
     lr := LogReader{
         RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
         RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
         RegexParseAction: regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`), 
         RegexParseMessage: regexp.MustCompile(`^\[(.+)\] <(\S+)> (.+)$`),
         Users: make(map[string]User),
+	Database: db,
     }
 
     lr.LoadFile("irctest.log") 
+
+    db.Save("db.bin")
 
     //u.CalculateTotals()
     fmt.Printf("%v\n", lr)
