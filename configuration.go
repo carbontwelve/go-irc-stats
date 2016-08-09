@@ -17,6 +17,7 @@ type Config struct {
 	HeatMapInterval uint
 	Ignore []string
 	NickNameMapping map[string][]string
+	NickNameHashTable map[string]string
 	Profiles map[string]map[string]string
 }
 
@@ -59,6 +60,14 @@ func (c *Config) Load (path string) (err error) {
 
 	if c.HeatMapInterval == 0 {
 		c.HeatMapInterval = 100
+	}
+
+	// Create a hash table for username corrections
+	c.NickNameHashTable = make(map[string]string)
+	for u, mappings := range (c.NickNameMapping) {
+		for _, mappedNick := range(mappings) {
+			c.NickNameHashTable[mappedNick] = u
+		}
 	}
 
 	return

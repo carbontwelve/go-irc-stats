@@ -65,16 +65,10 @@ func (lr LogReader) IsUserIgnored(username string) bool {
 	return false
 }
 
-// Map the users nick if found in the configuration against a mapping. This will become slow
-// for large data sets and so should be shifted to its own struct with caching via a hash map
-// of sorts.
+// Map the users nick if found in the configuration against a mapping.
 func (lr LogReader) MapNick(username string) string {
-	for u, mappings := range (lr.Config.NickNameMapping) {
-		for _, mappedNick := range(mappings) {
-			if (mappedNick == username) {
-				return u
-			}
-		}
+	if val, ok := lr.Config.NickNameHashTable[username]; ok{
+		return val
 	}
 	return username
 }
