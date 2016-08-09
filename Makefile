@@ -4,7 +4,7 @@ BINARY=logstats
 VERSION=1.0.0
 BUILD=`git rev-parse HEAD`
 
-LDFLAGS=-ldflags "-X main.Version ${VERSION} -X main.BuildTime ${BUILD}"
+LDFLAGS=-ldflags "-X main.Version=${VERSION} -X main.BuildTime=${BUILD}"
 
 # Default Target
 .DEFAULT_GOAL: ${BINARY}
