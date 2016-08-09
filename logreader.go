@@ -36,7 +36,7 @@ func (lr *LogReader) LoadFile(path string) bool {
 		} else if lr.RegexMessage.MatchString(line) == true {
 			lr.ParseLine(line, false)
 		} else {
-			fmt.Printf("error reading line [%i]\n", lr.Database.Channel.LineCount)
+			fmt.Printf("error reading line [%d]\n", lr.Database.Channel.LineCount)
 		}
 	}
 
@@ -76,10 +76,7 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 	// Convert timestamp into unix timestamp
 	lineTime := lr.ParseTime(parsed[0][1])
 	if lineTime.Unix() <= lr.Database.Channel.Last {
-		//fmt.Printf("Ignoring: %d < %d\n", lineTime.Unix(), lr.Database.Channel.Last)
 		return false
-	} else {
-		//fmt.Printf("Parsing: %d > %d\n", lineTime.Unix(), lr.Database.Channel.Last)
 	}
 
 	// Parse nick and check against ignore list
