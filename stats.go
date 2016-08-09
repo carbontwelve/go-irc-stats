@@ -20,18 +20,13 @@ func (s *Stats) IncrementDay(date string) {
 }
 
 func (s Stats) FindPeakDay() (date string, total uint) {
-	var (
-		currentMaxDate string
-		currentMaxTotal uint
-	)
-
 	for d, t := range (s.Days) {
-		if (t > currentMaxTotal) {
-			currentMaxDate = d
-			currentMaxTotal = t
+		if (t > total) {
+			date = d
+			total = t
 		}
 	}
-	return currentMaxDate, currentMaxTotal
+	return
 }
 
 func (s *Stats) InitiateStats() {
