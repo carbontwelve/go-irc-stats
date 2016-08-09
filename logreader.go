@@ -57,7 +57,12 @@ func (lr LogReader) ParseTime(inputDate string) time.Time {
 }
 
 func (lr LogReader) IsUserIgnored(username string) bool {
-	return true
+	for _, n := range(lr.Config.Ignore) {
+		if username == n {
+			return true
+		}
+	}
+	return false
 }
 
 func (lr *LogReader) ParseLine(line string, isAction bool) bool {
@@ -82,7 +87,9 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
 	// Parse nick and check against ignore list
 	lineNick := strings.Trim(strings.ToLower(parsed[0][2]), " ")
-	// @todo check against ignore list
+	if (lr.IsUserIgnored(lineNick) == true) {
+		return false
+	}
 
 	// Parse message
 	lineMessage := strings.Trim(parsed[0][3], " ")
