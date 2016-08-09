@@ -13,8 +13,14 @@ var (
 func main() {
 	fmt.Printf("Version: %s Build %s\n", Version, Build)
 
+	config := Config{}
+	configErr := config.Load("config.yaml")
+	if (configErr != nil) {
+		panic(configErr)
+	}
+
 	db := Database{}
-	db.Load("db.bin")
+	db.Load(config.DatabaseLocation)
 
 	fmt.Println("Last Parsed: ", db.LastGenerated)
 
@@ -27,7 +33,7 @@ func main() {
 	}
 
 	// Load log file and parse any new lines
-	lr.LoadFile("irctest.log")
+	lr.LoadFile(config.Location)
 
 	// Get Database to calculate stats and totals
 	lr.Database.Calculate()
@@ -36,7 +42,7 @@ func main() {
 	fmt.Printf("Mean Lines/Day: %f\n", lr.Database.Channel.Mean)
 
 	// Once we are finished dump to disk cache file
-	lr.Database.Save("db.bin")
+	lr.Database.Save(config.DatabaseLocation)
 
 	//fmt.Printf("%v\n", lr.Database.Channel.MaxDay)
 }

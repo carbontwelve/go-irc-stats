@@ -1,0 +1,32 @@
+# Relative or absolute path to your log file
+location: irctest.log
+
+# Relative or absolute path to the folder where you want the generated .html file to be saved
+savelocation: ./
+
+# Relative or absolute path to the folder where you want the generated database cache file to be saved
+databaselocation: ./db.bin
+
+# Page info in the header of generated .html
+pagetitle: Title
+pagedescription: Description
+
+# Scale for the heatmap (integer)
+heatmapinterval:
+
+# Ignore list
+ignore:
+  - somebot
+  - otherbot
+
+# Combine nick names for people who use multiple
+nicknamemapping:
+  joebloggs:
+     - joebloggs_away
+     - joebloggs_phone
+
+# Url and Avatar to show in active users table
+profiles:
+  joebloggs:
+     :url: https://www.example.com
+     :avatar: https://secure.gravatar.com/avatar/ba1e13e0887456893b07e4ee8e78aece
