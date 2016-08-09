@@ -15,11 +15,12 @@ type LogReader struct {
 	RegexMessage      *regexp.Regexp
 	RegexParseAction  *regexp.Regexp
 	RegexParseMessage *regexp.Regexp
+	Config            Config
 }
 
-func (lr *LogReader) LoadFile(path string) bool {
+func (lr *LogReader) LoadFile() bool {
 	// Open the file
-	f, err := os.Open(path)
+	f, err := os.Open(lr.Config.Location)
 
 	if (err != nil) {
 		return false
@@ -115,7 +116,7 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 	user.IncrementDay(lineTime.Format("2006-02-01"))
 	lr.Database.IncrementDay(lineTime.Format("2006-02-01"))
 
-	// Incremember Hours
+	// Increment Hours
 	user.IncrementHour(uint(lineTime.Hour()))
 	lr.Database.IncrementHour(uint(lineTime.Hour()))
 
