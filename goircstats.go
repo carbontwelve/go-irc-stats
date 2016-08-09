@@ -40,11 +40,12 @@ func main() {
 	// Get Database to calculate stats and totals
 	lr.Database.Calculate()
 
-	//fmt.Printf("Last line date [%d]\n", lr.Database.Channel.Last)
-	//fmt.Printf("Mean Lines/Day: %f\n", lr.Database.Channel.Mean)
+	fmt.Printf("Last line date [%d]\n", lr.Database.Channel.Last)
+	fmt.Printf("Mean Lines/Day: %f\n", lr.Database.Channel.Mean)
+	fmt.Printf("Total Lines Parsed: %d\n", lr.Database.Channel.LineCount)
 
 	// Once we are finished dump to disk cache file
 	lr.Database.Save(config.DatabaseLocation)
 
-	fmt.Printf("%v\n", lr.Database)
+	//fmt.Printf("%v\n", lr.Database)
 }

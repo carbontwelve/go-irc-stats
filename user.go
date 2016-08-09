@@ -6,6 +6,7 @@ type User struct {
 	Avatar     string
 	LineCount  uint
 	WordCount  uint
+	DaysActive uint
 	CharCount  uint
 	WordsLine  uint
 	LineLength uint

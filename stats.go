@@ -11,9 +11,9 @@ func (s *Stats) IncrementHour(hour uint) {
 }
 
 // Increment Days
-func (s *Stats) IncrementDay(date string) {
+func (s *Stats) IncrementDay(date string, increment uint) {
 	if _, ok := s.Days[date]; ok {
-		s.Days[date]++
+		s.Days[date] += increment
 	} else {
 		s.Days[date] = 1
 	}

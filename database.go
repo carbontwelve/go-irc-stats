@@ -6,6 +6,7 @@ import (
 	"errors"
 	"os"
 	"bytes"
+	"time"
 )
 
 type MaxDay struct {
@@ -27,7 +28,7 @@ type Database struct {
 	Channel       Channel
 	Users         map[string]User
 	LastGenerated int64
-	ActiveUsers   []string
+	ActiveUsers   map[string]User
 	Stats
 }
 
@@ -116,6 +117,9 @@ func (d *Database) Calculate() {
 
 	// Get Peak Activity
 	d.calculatePeakActivity()
+
+	// Get active Users
+	d.calculateActiveUsers()
 }
 
 func (d *Database) calculateDailyMeanLines() {
@@ -129,9 +133,41 @@ func (d *Database) calculateDailyMeanLines() {
 		size += u.LineCount
 	}
 	d.Channel.Mean = float64(sum) / float64(size)
-	//fmt.Printf("Sum / Size : %d/%d = %f \n", sum, size, d.Channel.Mean)
 }
 
 func (d *Database) calculatePeakActivity() {
 	d.Channel.MaxDay.Day, d.Channel.MaxDay.Lines = d.FindPeakDay()
+}
+
+func (d *Database) calculateActiveUsers() {
+	timePeriod := make(map[string]bool)
+	d.ActiveUsers = make(map[string]User)
+
+	for i := 1; i < 30; i++ {
+		timePeriod[time.Now().AddDate(0, 0, -i).Format("2006-02-01")] = true
+	}
+
+	for _, u := range (d.Users) {
+		var (
+			wordCount uint
+			daysActive uint
+		)
+
+		// Check to see if user has been active within our time period (default past 30 days)
+		for timePeriodDate := range (timePeriod) {
+			if _, ok := u.Days[timePeriodDate]; ok {
+				daysActive++
+				wordCount += u.Days[timePeriodDate]
+			}
+		}
+
+		// If the user is active, copy the struct and push it to the active users hash
+		if daysActive > 0 {
+			uc := &u
+			uc.WordCount = wordCount
+			uc.DaysActive = daysActive
+			uc.WordsDay = wordCount / daysActive
+			d.ActiveUsers[uc.Username] = *uc
+		}
+	}
 }
