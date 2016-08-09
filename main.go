@@ -7,12 +7,11 @@ import (
 
 var (
 	Version string
-	BuildTime string
+	Build string
 )
 
 func main() {
-	fmt.Println("Version: ", Version)
-	fmt.Println("Build Time: ", BuildTime)
+	fmt.Printf("Version: %s Build %s\n", Version, Build)
 
 	db := Database{}
 	db.Load("db.bin")
