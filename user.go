@@ -16,9 +16,8 @@ type User struct {
     FirstSeen int64
     LastSeen int64
     MaxHours uint
-    Hours [23]uint          // 24 hours
-    Days  map[string]uint   // total days seen
     Words []string
+    Stats
 }
 
 func (u *User) CalculateTotals() {
@@ -47,7 +46,7 @@ func NewUser(nick string, timestamp int64) User {
 
     days = make(map[string]uint)
 
-    u := User{Username: nick, FirstSeen: timestamp, LastSeen: timestamp, Hours: hours, Days: days}
+    u := User{Username: nick, FirstSeen: timestamp, LastSeen: timestamp, Stats: Stats{Hours: hours, Days: days}}
     return u
 }
 

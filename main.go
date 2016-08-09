@@ -68,10 +68,10 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     var parsed[][]string
     var user User
 
-    //fmt.Println("Parsing Line: [" + line + "]\n\n")
     // timestamp = [0][1]
     // nick = [0][2]
     // message/action = [0][3]
+
     if isAction == true {
         parsed = lr.RegexParseAction.FindAllStringSubmatch(line, -1)
     }else{
@@ -80,11 +80,11 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
     // Convert timestamp into unix timestamp
     lineTime := lr.ParseTime(parsed[0][1])
-    if lineTime.Unix() <= lr.Database.Channel.Last {
-	fmt.Println("Ignoring line")
+    if lineTime.Unix() < lr.Database.Channel.Last {
+        fmt.Printf("Ignoring: %d < %d\n", lineTime.Unix(), lr.Database.Channel.Last)
         return false
     }else{
-        fmt.Printf("Parsing line: [%i] > [%i] \n", lineTime.Unix(), lr.Database.Channel.Last)
+        fmt.Printf("Parsing: %d > %d\n", lineTime.Unix(), lr.Database.Channel.Last)
     }
 
     // Parse nick and check against ignore list
@@ -120,14 +120,18 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     user.CharCount += uint(lineMessageCharCount)
     
     // Increment Days
-    if _, ok := user.Days[lineTime.Format("2006-02-01")]; ok {
-        user.Days[lineTime.Format("2006-01-02")]++
-    }else{
-        user.Days[lineTime.Format("2006-01-02")] = 1
-    }
+    user.IncrementDay(lineTime.Format("2006-02-01"))
+
+//    if _, ok := user.Days[lineTime.Format("2006-02-01")]; ok {
+//        user.Days[lineTime.Format("2006-01-02")]++
+//    }else{
+//        user.Days[lineTime.Format("2006-01-02")] = 1
+//    }
 
     // Incremember Hours
-    user.Hours[uint(lineTime.Hour())]++
+    user.IncrementHour(uint(lineTime.Hour()))
+    //user.Hours[uint(lineTime.Hour())]++
+    
 
     // Set first and last seen timestamps
     if user.FirstSeen > lineTime.Unix() {

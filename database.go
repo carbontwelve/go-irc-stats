@@ -23,6 +23,8 @@ type Database struct{
     Users map[string]User
     LastGenerated int64
     ActiveUsers []string
+    Hours [23]uint          // 24 hours
+    Days  map[string]uint   // total days seen
 }
 
 /**
@@ -32,6 +34,11 @@ type Database struct{
  * @return error|nil
  */
 func (d *Database) Load(path string) (err error)  {
+    for i := 0; i < 23; i++ {
+        d.Hours[i] = 0
+    }
+
+    d.Days = make(map[string]uint)
     d.Users = make(map[string]User)
 
     fh, err := os.Open(path)
