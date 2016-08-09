@@ -163,11 +163,11 @@ func (d *Database) calculateActiveUsers() {
 
 		// If the user is active, copy the struct and push it to the active users hash
 		if daysActive > 0 {
-			uc := &u
+			uc := u
 			uc.WordCount = wordCount
 			uc.DaysActive = daysActive
 			uc.WordsDay = wordCount / daysActive
-			d.ActiveUsers[uc.Username] = *uc
+			d.ActiveUsers[uc.Username] = uc
 		}
 	}
 }
