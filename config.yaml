@@ -21,8 +21,8 @@ ignore:
 
 # Combine nick names for people who use multiple
 nicknamemapping:
-  joebloggs:
-     - joebloggs_away
+  steve:
+     - joebloggs
      - joebloggs_phone
 
 # Url and Avatar to show in active users table

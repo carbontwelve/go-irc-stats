@@ -65,6 +65,20 @@ func (lr LogReader) IsUserIgnored(username string) bool {
 	return false
 }
 
+// Map the users nick if found in the configuration against a mapping. This will become slow
+// for large data sets and so should be shifted to its own struct with caching via a hash map
+// of sorts.
+func (lr LogReader) MapNick(username string) string {
+	for u, mappings := range (lr.Config.NickNameMapping) {
+		for _, mappedNick := range(mappings) {
+			if (mappedNick == username) {
+				return u
+			}
+		}
+	}
+	return username
+}
+
 func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 	var parsed[][]string
 	var user User
@@ -90,6 +104,7 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 	if (lr.IsUserIgnored(lineNick) == true) {
 		return false
 	}
+	lineNick = lr.MapNick(lineNick)
 
 	// Parse message
 	lineMessage := strings.Trim(parsed[0][3], " ")

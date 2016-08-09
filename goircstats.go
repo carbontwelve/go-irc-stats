@@ -46,5 +46,5 @@ func main() {
 	// Once we are finished dump to disk cache file
 	lr.Database.Save(config.DatabaseLocation)
 
-	//fmt.Printf("%v\n", lr.Database.Channel.MaxDay)
+	fmt.Printf("%v\n", lr.Database)
 }
