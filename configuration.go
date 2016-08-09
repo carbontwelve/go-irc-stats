@@ -57,5 +57,9 @@ func (c *Config) Load (path string) (err error) {
 
 	c.DatabaseLocation, _ = filepath.Abs(c.DatabaseLocation)
 
+	if c.HeatMapInterval == 0 {
+		c.HeatMapInterval = 100
+	}
+
 	return
 }
