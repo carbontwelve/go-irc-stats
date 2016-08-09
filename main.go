@@ -80,11 +80,11 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
     // Convert timestamp into unix timestamp
     lineTime := lr.ParseTime(parsed[0][1])
-    if lineTime.Unix() < lr.Database.Channel.Last {
-        fmt.Printf("Ignoring: %d < %d\n", lineTime.Unix(), lr.Database.Channel.Last)
+    if lineTime.Unix() <= lr.Database.Channel.Last {
+        //fmt.Printf("Ignoring: %d < %d\n", lineTime.Unix(), lr.Database.Channel.Last)
         return false
     }else{
-        fmt.Printf("Parsing: %d > %d\n", lineTime.Unix(), lr.Database.Channel.Last)
+        //fmt.Printf("Parsing: %d > %d\n", lineTime.Unix(), lr.Database.Channel.Last)
     }
 
     // Parse nick and check against ignore list
@@ -121,17 +121,11 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
     
     // Increment Days
     user.IncrementDay(lineTime.Format("2006-02-01"))
-
-//    if _, ok := user.Days[lineTime.Format("2006-02-01")]; ok {
-//        user.Days[lineTime.Format("2006-01-02")]++
-//    }else{
-//        user.Days[lineTime.Format("2006-01-02")] = 1
-//    }
+    lr.Database.IncrementDay(lineTime.Format("2006-02-01"))
 
     // Incremember Hours
     user.IncrementHour(uint(lineTime.Hour()))
-    //user.Hours[uint(lineTime.Hour())]++
-    
+    lr.Database.IncrementHour(uint(lineTime.Hour()))   
 
     // Set first and last seen timestamps
     if user.FirstSeen > lineTime.Unix() {
@@ -163,7 +157,6 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 }
 
 func main() {
-
     fmt.Println("Version: ", Version)
     fmt.Println("Build Time: ", BuildTime)
 
@@ -186,11 +179,12 @@ func main() {
     // Get Database to calculate stats and totals
     lr.Database.Calculate()
 
-    fmt.Printf("Last line date [%i]\n", lr.Database.Channel.Last)
+    fmt.Printf("Last line date [%d]\n", lr.Database.Channel.Last)
+    fmt.Printf("Mean Lines/Day: %f\n", lr.Database.Channel.Mean)
 
     // Once we are finished dump to disk cache file
     lr.Database.Save("db.bin")
 
     //u.CalculateTotals()
-    fmt.Printf("%v\n", lr.Database)
+    //fmt.Printf("%v\n", lr.Database.Channel.MaxDay)
 }

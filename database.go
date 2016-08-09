@@ -8,12 +8,17 @@ import (
     "bytes"
 )
 
+type MaxDay struct{
+    Day string
+    Lines uint
+}
+
 type Channel struct{
     UserCount uint
     LineCount uint
     WordCount uint
-    MaxDay uint
-    Mean int64
+    MaxDay MaxDay
+    Mean float64
     First int64
     Last int64
 }
@@ -23,8 +28,7 @@ type Database struct{
     Users map[string]User
     LastGenerated int64
     ActiveUsers []string
-    Hours [23]uint          // 24 hours
-    Days  map[string]uint   // total days seen
+    Stats
 }
 
 /**
@@ -34,11 +38,7 @@ type Database struct{
  * @return error|nil
  */
 func (d *Database) Load(path string) (err error)  {
-    for i := 0; i < 23; i++ {
-        d.Hours[i] = 0
-    }
-
-    d.Days = make(map[string]uint)
+    d.InitiateStats()    
     d.Users = make(map[string]User)
 
     fh, err := os.Open(path)
@@ -110,4 +110,28 @@ func (d Database) GetUser(nick string) (user User, err error) {
 func (d *Database) Calculate() {
     // Set Channel User counter
     d.Channel.UserCount = uint(len(d.Users))
+
+    // Get Average lines / day
+    d.calculateDailyMeanLines()
+
+    // Get Peak Activity
+    d.calculatePeakActivity()
+}
+
+func (d *Database) calculateDailyMeanLines() {
+    var (
+        sum uint
+        size uint
+    )
+
+    for _, u := range(d.Users) {
+        sum++
+        size += u.LineCount
+    }
+    d.Channel.Mean = float64(sum)/float64(size)
+    //fmt.Printf("Sum / Size : %d/%d = %f \n", sum, size, d.Channel.Mean)
+}
+
+func (d *Database) calculatePeakActivity() {
+    d.Channel.MaxDay.Day, d.Channel.MaxDay.Lines = d.FindPeakDay()
 }
