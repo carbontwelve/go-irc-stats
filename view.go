@@ -10,12 +10,6 @@ type View struct {
 	template *template.Template
 	functionMapping template.FuncMap
 }
-type ViewData struct {
-	PageTitle string
-	PageDescription string
-	Channel Channel
-	ActiveUsers map[string]User
-}
 
 func (v *View) Load(filename string) (err error) {
 	v.template, err = template.ParseFiles(filename)
@@ -38,8 +32,4 @@ func (v View) Parse(data ViewData) (err error) {
 	err = v.template.Execute(buf, data)
 	ioutil.WriteFile("stats.html", buf.Bytes(), 0600)
 	return
-}
-
-func (d ViewData) TotalDays() int {
-	return 123
 }
