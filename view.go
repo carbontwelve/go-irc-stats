@@ -6,30 +6,19 @@ import (
 	"bytes"
 )
 
-type View struct {
-	template *template.Template
-	functionMapping template.FuncMap
-}
+type View struct {}
 
-func (v *View) Load(filename string) (err error) {
-	v.template, err = template.ParseFiles(filename)
+func (v View) Parse(filename string, data ViewData) (err error) {
+	funcMap := template.FuncMap{
+		"tableflip": func () string { return "(╯°□°）╯︵ ┻━┻" },
+	}
+	template, err := template.New(filename).Funcs(funcMap).ParseFiles(filename)
 	if err != nil {
 		return err
 	}
 
-	v.functionMapping = template.FuncMap{
-		"eq": func(a, b interface{}) bool {
-			return a == b
-		},
-	}
-
-	v.template.Funcs(v.functionMapping)
-	return
-}
-
-func (v View) Parse(data ViewData) (err error) {
 	buf := &bytes.Buffer{}
-	err = v.template.Execute(buf, data)
+	err = template.Execute(buf, data)
 	ioutil.WriteFile("stats.html", buf.Bytes(), 0600)
 	return
 }

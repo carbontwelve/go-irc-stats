@@ -53,11 +53,15 @@ func main() {
 		HeatMapInterval: config.HeatMapInterval,
 		Database : lr.Database,
 	}
+
+	vd.buildDayHeatMapDays()
+
 	v := View{}
-	v.Load("template.html")
-	v.Parse(vd)
+	err := v.Parse("template.html", vd)
 
-	_, _, _, d := vd.buildDayHeatMapDays()
+	if (err != nil){
+		panic(err)
+	}
 
-	fmt.Printf("%v\n", d)
+	fmt.Printf("%v\n", vd.SvgGraphData.Width)
 }

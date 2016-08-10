@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/carbontwelve/go-irc-stats/helpers"
-	"fmt"
 	"time"
 )
 
@@ -27,25 +26,33 @@ type SvgGraphWeek struct {
 	Last  string
 }
 
+type SvgGraphData struct {
+	Days []SvgGraphDay
+	Weeks []SvgGraphWeek
+	Labels []SvgGraphLabel
+	MLables []SvgGraphLabel
+	Width int
+}
+
 type ViewData struct {
 	PageTitle       string
 	PageDescription string
 	HeatMapInterval uint
 	Database        Database
-	DayHeatMapDays  []SvgGraphDay
+	SvgGraphData SvgGraphData
 }
 
 func (d ViewData) TotalDays() int {
 	return helpers.DaysDiffUnix(d.Database.Channel.Last, d.Database.Channel.First)
 }
 
-func (d ViewData) buildDayHeatMapDays() (Days []SvgGraphDay, Weeks []SvgGraphWeek, Labels []SvgGraphLabel, MLables []SvgGraphLabel) {
+func (d *ViewData) buildDayHeatMapDays() () {
 	timeNow := time.Now()
 	totalDays := d.TotalDays()
-	Days = make([]SvgGraphDay, totalDays)
-	Weeks = make([]SvgGraphWeek, (totalDays / 7) + 1)
-	Labels = make([]SvgGraphLabel, 1)
-	MLables = make([]SvgGraphLabel, 1)
+	Days := make([]SvgGraphDay, totalDays)
+	Weeks := make([]SvgGraphWeek, (totalDays / 7) + 1)
+	Labels := make([]SvgGraphLabel, 1)
+	MLables := make([]SvgGraphLabel, 1)
 
 	var (
 		weekDays [7]int
@@ -145,8 +152,15 @@ func (d ViewData) buildDayHeatMapDays() (Days []SvgGraphDay, Weeks []SvgGraphWee
 			})
 		}
 
-		fmt.Printf("%d days ago [%s] is element %d\n", (totalDays - i), elementTime.Format("2006-02-01"), i)
+		//fmt.Printf("%d days ago [%s] is element %d\n", (totalDays - i), elementTime.Format("2006-02-01"), i)
+	}
+	d.SvgGraphData = SvgGraphData{
+		Days: Days,
+		Weeks: Weeks,
+		Labels: Labels,
+		MLables: MLables,
 	}
 
+	d.SvgGraphData.Width = ((len(d.SvgGraphData.Days) - 1) * 10) + 10
 	return
 }
