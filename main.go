@@ -50,12 +50,14 @@ func main() {
 	vd := ViewData{
 		PageTitle : config.PageTitle,
 		PageDescription : config.PageDescription,
-		Channel : lr.Database.Channel,
-		ActiveUsers : lr.Database.ActiveUsers,
+		HeatMapInterval: config.HeatMapInterval,
+		Database : lr.Database,
 	}
 	v := View{}
 	v.Load("template.html")
 	v.Parse(vd)
 
-	//fmt.Printf("%v\n", lr.Database)
+	_, _, _, d := vd.buildDayHeatMapDays()
+
+	fmt.Printf("%v\n", d)
 }

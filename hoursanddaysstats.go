@@ -19,6 +19,13 @@ func (s *HoursAndDaysStats) IncrementDay(date string, increment uint) {
 	}
 }
 
+func (s HoursAndDaysStats) HasDay(day string) bool {
+	if _, ok := s.Days[day]; ok {
+		return true
+	}
+	return false
+}
+
 func (s HoursAndDaysStats) FindPeakDay() (date string, total uint) {
 	for d, t := range (s.Days) {
 		if (t > total) {

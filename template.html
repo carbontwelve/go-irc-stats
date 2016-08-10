@@ -5,7 +5,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     {{if .PageTitle}}<title>{{.PageTitle}}</title>{{end}}
-    {{if .PageDescription}}<meta name="description" content="{{.PageDescription}}">{{end}}
+    {{if .PageDescription}}
+    <meta name="description" content="{{.PageDescription}}">
+    {{end}}
     <style>
         @font-face {
             font-family: 'Roboto';
@@ -14,6 +16,7 @@
             src: local('Roboto Light'), local('Roboto-Light'), url(https://fonts.gstatic.com/s/roboto/v15/Hgo13k-tfSpn0qi1SFdUfZBw1xU1rKptJj_0jans920.woff2) format('woff2');
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
         }
+
         @font-face {
             font-family: 'Roboto';
             font-style: normal;
@@ -21,6 +24,7 @@
             src: local('Roboto'), local('Roboto-Regular'), url(https://fonts.gstatic.com/s/roboto/v15/oMMgfZMQthOryQo9n22dcuvvDin1pK8aKteLpeZ5c0A.woff2) format('woff2');
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
         }
+
         @font-face {
             font-family: 'Roboto';
             font-style: normal;
@@ -28,10 +32,12 @@
             src: local('Roboto Medium'), local('Roboto-Medium'), url(https://fonts.gstatic.com/s/roboto/v15/RxZJdnzeo3R5zSexge8UUZBw1xU1rKptJj_0jans920.woff2) format('woff2');
             unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
         }
+
         * {
             box-sizing: border-box;
         }
-        html,body {
+
+        html, body {
             font: normal 16px/1.5 "Roboto", "Open Sans", "Noto Sans", -apple-system, BlinkMacSystemFont, "Helvetica Neue", sans-serif;
             -webkit-transition: opacity 0.5s ease-in-out;
             transition: opacity 0.5s ease-in-out;
@@ -39,29 +45,36 @@
             background-color: #fff;
             color: #333;
         }
+
         a {
             text-decoration: none;
             color: black;
         }
+
         a:hover {
             color: #534e94;
         }
+
         main {
             max-width: 630px;
             padding: 15px;
             margin: auto;
             display: block;
         }
+
         h1 {
             margin: 50px 0;
         }
-        h1,h2 {
+
+        h1, h2 {
             font-weight: 300;
             text-align: center;
         }
+
         h2 {
             margin: 100px 0 50px;
         }
+
         h4 {
             text-align: center;
             font-weight: normal;
@@ -70,32 +83,38 @@
             margin-bottom: 50px;
             color: #999;
         }
+
         hr {
             border: none;
             height: 1px;
             background-color: #ddd;
             margin: 50px auto;
         }
+
         p {
             color: #999;
             font-weight: 300;
             font-size: 14px;
             margin: auto;
         }
+
         header p {
             max-width: 400px;
             font-size: 16px;
             color: #555;
         }
+
         header hr {
             max-width: 200px;
         }
+
         .activity-numbers {
             display: -webkit-box;
             display: flex;
             flex-flow: row wrap;
             width: 100%;
         }
+
         .activity-numbers div {
             padding: 10px 0;
             font-size: 30px;
@@ -103,6 +122,372 @@
             -webkit-box-flex: 1;
             flex-grow: 1;
             text-align: center;
+        }
+
+        @media (max-width: 500px) {
+            .activity-numbers div {
+                min-width: 140px;
+                -webkit-box-flex: 1;
+                flex: 1 1 0;
+                -webkit-flex: 1 1 auto;
+            }
+        }
+
+        .activity-numbers span {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .activity-numbers small {
+            font-size: 18px;
+        }
+
+        text {
+            font-size: 12px;
+        }
+
+        .chart rect:hover {
+            fill: #00d1fd;
+        }
+
+        .scale-1 {
+            fill: #c2d0de;
+            border-color: #c2d0de;
+        }
+
+        .scale-2 {
+            fill: #8495ab;
+            border-color: #8495ab;
+        }
+
+        .scale-3 {
+            fill: #4e5f73;
+            border-color: #4e5f73;
+        }
+
+        .scale-4 {
+            fill: #534e94;
+            border-color: #534e94;
+        }
+
+        .scale-5 {
+            fill: #825db8;
+            border-color: #825db8;
+        }
+
+        .scale-6 {
+            fill: #c56edd;
+            border-color: #c56edd;
+        }
+
+        .key {
+            display: -webkit-box;
+            display: flex;
+            position: absolute;
+            top: 237px;
+        }
+
+        .key div {
+            border-top-width: 4px;
+            border-top-style: solid;
+            width: 36px;
+            font-size: 11px;
+            padding: 5px 0 0;
+            margin-right: 1px;
+        }
+
+        @media (max-width: 500px) {
+            .key div:nth-child(odd) {
+                display: none;
+            }
+        }
+
+        #charts {
+            position: relative;
+            height: 275px;
+        }
+
+        #charts, .chart {
+            max-width: 600px;
+        }
+
+        .chart {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            overflow-x: auto;
+            text-align: center;
+        }
+
+        #charts .hover {
+            position: absolute;
+            top: 228px;
+            right: 0;
+            font-size: 14px;
+        }
+
+        #charts .hover .date, #charts .hover .lines {
+            text-align: right;
+        }
+
+        @media (max-width: 500px) {
+            #charts .hover {
+                font-size: 12px;
+            }
+        }
+
+        #hourly {
+            position: relative;
+            height: 170px;
+            max-width: 340px;
+            margin: 20px auto;
+        }
+
+        #hourly .hover {
+            position: absolute;
+            top: 135px;
+            display: -webkit-box;
+            display: flex;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        #hourly .lines {
+            text-align: right;
+            -webkit-box-flex: 1;
+            flex-grow: 1;
+        }
+
+        #active-users, #top-users {
+            border-spacing: 0;
+            width: 100%;
+        }
+
+        #user-hours {
+            display: -webkit-box;
+            display: flex;
+            flex-flow: row wrap;
+            -webkit-box-pack: center;
+            justify-content: center;
+        }
+
+        #user-hours > div {
+            min-width: 120px;
+            margin: 10px 10px 30px;
+        }
+
+        #user-hours svg {
+            margin-top: 10px;
+        }
+
+        table {
+            margin-bottom: 10px;
+        }
+
+        td, th {
+            text-align: right;
+        }
+
+        th {
+            text-transform: uppercase;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            padding-bottom: 10px;
+        }
+
+        td {
+            padding: 5px 0;
+            border-bottom: 1px solid #ddd;
+        }
+
+        td:first-child {
+            font-size: 20px;
+            font-weight: 300;
+            text-align: left;
+        }
+
+        td img {
+            width: 45px;
+            height: 45px;
+            background-color: #aaa;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+
+        td img, td svg {
+            vertical-align: middle;
+        }
+
+        @media (max-width: 500px) {
+            td:first-child {
+                font-size: 16px;
+                font-weight: normal;
+            }
+
+            th:nth-last-child(2), td:nth-last-child(2), th:last-child, td:last-child {
+                display: none;
+            }
+
+            td img {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        #user-hours img {
+            width: 20px;
+            height: 20px;
+            background-color: #aaa;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+
+        .stacked-chart {
+            display: -webkit-box;
+            display: flex;
+            height: 40px;
+        }
+
+        .stacked-chart div:nth-child(1),
+        #activity-percentage li:nth-child(1) .color {
+            background-color: #c56edd
+        }
+
+        .stacked-chart div:nth-child(2),
+        #activity-percentage li:nth-child(2) .color {
+            background-color: #ad68d0
+        }
+
+        .stacked-chart div:nth-child(3),
+        #activity-percentage li:nth-child(3) .color {
+            background-color: #8d60bf
+        }
+
+        .stacked-chart div:nth-child(4),
+        #activity-percentage li:nth-child(4) .color {
+            background-color: #7458af
+        }
+
+        .stacked-chart div:nth-child(5),
+        #activity-percentage li:nth-child(5) .color {
+            background-color: #5e509f
+        }
+
+        .stacked-chart div:nth-child(6),
+        #activity-percentage li:nth-child(6) .color {
+            background-color: #514e90
+        }
+
+        .stacked-chart div:nth-child(7),
+        #activity-percentage li:nth-child(7) .color {
+            background-color: #4e527d
+        }
+
+        .stacked-chart div:nth-child(8),
+        #activity-percentage li:nth-child(8) .color {
+            background-color: #4e5c73
+        }
+
+        .stacked-chart div:nth-child(9),
+        #activity-percentage li:nth-child(9) .color {
+            background-color: #5b6e7f
+        }
+
+        .stacked-chart div:nth-child(10),
+        #activity-percentage li:nth-child(10) .color {
+            background-color: #75869b
+        }
+
+        .stacked-chart div:last-child {
+            background-color: #8f9fb4;
+            -webkit-box-flex: 1;
+            flex-grow: 1;
+        }
+
+        #activity-percentage ol {
+            padding: 0;
+            margin: 50px auto;
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+            column-count: 2;
+        }
+
+        #activity-percentage li {
+            font-size: 16px;
+            padding: 5px 0;
+            list-style: none;
+            line-height: 25px;
+        }
+
+        #activity-percentage strong {
+            font-size: 14px;
+            font-weight: 500;
+            margin-left: 3px;
+        }
+
+        #activity-percentage .color {
+            width: 16px;
+            height: 16px;
+            border-radius: 8px;
+            vertical-align: middle;
+            margin-right: 8px;
+            display: inline-block;
+        }
+
+        #months {
+            display: -webkit-box;
+            display: flex;
+            -webkit-box-orient: horizontal;
+            -webkit-box-direction: normal;
+            flex-direction: row;
+            -webkit-box-pack: center;
+            justify-content: center;
+        }
+
+        .months-chart {
+            overflow-x: auto;
+            text-align: right;
+        }
+
+        .months-users {
+            flex-shrink: 0;
+        }
+
+        #months ol {
+            padding: 26px 0 0;
+            margin: 0;
+        }
+
+        #months li {
+            list-style: none;
+            line-height: 25px;
+        }
+
+        #months img {
+            width: 20px;
+            height: 20px;
+            border-radius: 2px;
+            vertical-align: middle;
+            margin-right: 5px;
+        }
+
+        footer:before {
+            width: 60px;
+            content: '';
+            display: inline-block;
+            height: 1px;
+            margin: 0 0 13px;
+            background-color: #999;
+        }
+
+        footer {
+            font-size: 12px;
+            margin-top: 50px;
         }
     </style>
 </head>
@@ -124,17 +509,50 @@
 
     <h2>Total Activity</h2>
     <div class="activity-numbers">
-        <div><span>Messages</span> {{ .Channel.LineCount }}</div>
-        <div><span>Words</span> {{ .Channel.WordCount }}</div>
-        <div><span>Users</span> {{ .Channel.UserCount }}</div>
+        <div><span>Messages</span> {{ .Database.Channel.LineCount }}</div>
+        <div><span>Words</span> {{ .Database.Channel.WordCount }}</div>
+        <div><span>Users</span> {{ .Database.Channel.UserCount }}</div>
         <div><span>Days</span> {{ .TotalDays }}</div>
     </div>
 
+    <div id="charts">
+
+        <div class="charts">
+            <svg width="<%= (@days.last[:x] * 10) + 10 %>px" height="275px" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 xmlns:data="http://www.example.com/data">
+                <g id="weeks" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(0,110) scale(1,-1)">
+                    <% @weeks.each do |week| -%>
+                    <rect x="<%= week[:x] * 10 %>" y="0" width="9"
+                          height="<%= ((week[:lines].to_f / @weeks_max) * 100).round %>"
+                          data:lines="<%= week[:lines] %>" data:first="<%= week[:first] %>"
+                          data:last="<%= week[:last] %>"></rect>
+                    <% end -%>
+                </g>
+
+                <g id="days" stroke="none" stroke-width="1" fill="none" transform="translate(0,152)">
+                    <% @days.each do |day| -%>
+                    <rect x="<%= day[:x] * 10 %>" y="<%= (day[:y] * 10) %>" width="9" height="9"
+                          class="<%= day[:class] %>" data:date="<%= day[:date] %>"
+                          data:lines="<%= day[:lines] %>"></rect>
+                    <% end -%>
+                </g>
+
+                <g class="labels" stroke="none" stroke-width="0" fill="black" transform="translate(0,111)">
+                    <% @labels.each do |label| -%>
+                    <line x1="<%= (label[:x] * 10) + 4.5 %>" y1="0" x2="<%= (label[:x] * 10) + 4.5 %>" y2="10"
+                          stroke="#bbb" stroke-width="1"/>
+                    <text x="<%= (label[:x] * 10) + 4.5 %>" y="25" text-anchor="middle"><%= label[:month] %></text>
+                    <line x1="<%= (label[:x] * 10) + 4.5 %>" y1="30" x2="<%= (label[:x] * 10) + 4.5 %>" y2="40"
+                          stroke="#bbb" stroke-width="1"/>
+                    <% end -%>
+                </g>
+            </svg>
+        </div>
+
+    </div>
+
 </main>
-
-{{if eq .Active "accueil"}}
-Its working!
-{{end}}
-
 </body>
 </html>
