@@ -1,16 +1,16 @@
 package main
 
 type Stats struct {
-	Hours [23]uint        // 24 hours
-	Days  map[string]uint // total days seen
+	Hours [23]uint        // lines per 24 hours
+	Days  map[string]uint // words per day
 }
 
-// Increment Hours
+// Increment Hours by one
 func (s *Stats) IncrementHour(hour uint) {
 	s.Hours[hour]++
 }
 
-// Increment Days
+// Increment Days by an input number
 func (s *Stats) IncrementDay(date string, increment uint) {
 	if _, ok := s.Days[date]; ok {
 		s.Days[date] += increment
