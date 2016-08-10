@@ -130,7 +130,9 @@ func (lr *LogReader) ParseLine(line string, isAction bool) bool {
 
 	// Increment words per day
 	user.IncrementDay(lineTime.Format("2006-02-01"), uint(lineMessageCharCount))
-	lr.Database.IncrementDay(lineTime.Format("2006-02-01"), uint(lineMessageCharCount))
+
+	// Increment lines per day
+	lr.Database.IncrementDay(lineTime.Format("2006-02-01"), 1)
 
 	// Increment lines per hour
 	user.IncrementHour(uint(lineTime.Hour()))
