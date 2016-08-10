@@ -48,9 +48,10 @@ func main() {
 	lr.Database.Save(config.DatabaseLocation)
 
 	vd := ViewData{
-		"PageTitle" : config.PageTitle,
-		"PageDescription" : config.PageDescription,
-		"Active" : "hello world",
+		PageTitle : config.PageTitle,
+		PageDescription : config.PageDescription,
+		Channel : lr.Database.Channel,
+		ActiveUsers : lr.Database.ActiveUsers,
 	}
 	v := View{}
 	v.Load("template.html")
