@@ -1,17 +1,17 @@
 package main
 
-type Stats struct {
+type HoursAndDaysStats struct {
 	Hours [23]uint        // lines per 24 hours
 	Days  map[string]uint // words per day
 }
 
 // Increment Hours by one
-func (s *Stats) IncrementHour(hour uint) {
+func (s *HoursAndDaysStats) IncrementHour(hour uint) {
 	s.Hours[hour]++
 }
 
 // Increment Days by an input number
-func (s *Stats) IncrementDay(date string, increment uint) {
+func (s *HoursAndDaysStats) IncrementDay(date string, increment uint) {
 	if _, ok := s.Days[date]; ok {
 		s.Days[date] += increment
 	} else {
@@ -19,7 +19,7 @@ func (s *Stats) IncrementDay(date string, increment uint) {
 	}
 }
 
-func (s Stats) FindPeakDay() (date string, total uint) {
+func (s HoursAndDaysStats) FindPeakDay() (date string, total uint) {
 	for d, t := range (s.Days) {
 		if (t > total) {
 			date = d
@@ -29,7 +29,7 @@ func (s Stats) FindPeakDay() (date string, total uint) {
 	return
 }
 
-func (s *Stats) InitiateStats() {
+func (s *HoursAndDaysStats) Initiate() {
 	for i := 0; i < 23; i++ {
 		s.Hours[i] = 0
 	}

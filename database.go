@@ -29,7 +29,7 @@ type Database struct {
 	Users         map[string]User
 	LastGenerated int64
 	ActiveUsers   map[string]User
-	Stats
+	HoursAndDaysStats
 }
 
 /**
@@ -39,7 +39,7 @@ type Database struct {
  * @return error|nil
  */
 func (d *Database) Load(path string) (err error) {
-	d.InitiateStats()
+	d.Initiate()
 	d.Users = make(map[string]User)
 
 	fh, err := os.Open(path)

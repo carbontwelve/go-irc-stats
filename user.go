@@ -18,7 +18,7 @@ type User struct {
 	LastSeen   int64
 	MaxHours   uint
 	Words      []string
-	Stats
+	HoursAndDaysStats
 }
 
 func (u *User) CalculateTotals() {
@@ -36,7 +36,7 @@ func (u *User) CalculateTotals() {
 
 func NewUser(nick string, timestamp int64) User {
 	u := User{Username: nick, FirstSeen: timestamp, LastSeen: timestamp}
-	u.InitiateStats()
+	u.Initiate()
 	return u
 }
 
