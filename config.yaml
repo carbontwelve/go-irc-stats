@@ -9,7 +9,7 @@ databaselocation: ./db.bin
 
 # Page info in the header of generated .html
 pagetitle: Title
-pagedescription: Description
+pagedescription: Default Description
 
 # Scale for the heatmap (integer)
 heatmapinterval:
