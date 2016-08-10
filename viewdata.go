@@ -27,11 +27,12 @@ type SvgGraphWeek struct {
 }
 
 type SvgGraphData struct {
-	Days []SvgGraphDay
-	Weeks []SvgGraphWeek
-	Labels []SvgGraphLabel
-	MLables []SvgGraphLabel
-	Width int
+	Days     []SvgGraphDay
+	Weeks    []SvgGraphWeek
+	Labels   []SvgGraphLabel
+	MLables  []SvgGraphLabel
+	WeekDays [7]int
+	Width    int
 }
 
 type ViewData struct {
@@ -39,7 +40,7 @@ type ViewData struct {
 	PageDescription string
 	HeatMapInterval uint
 	Database        Database
-	SvgGraphData SvgGraphData
+	SvgGraphData    SvgGraphData
 }
 
 func (d ViewData) TotalDays() int {
@@ -130,7 +131,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 
 		// April, July, October
 		if elementTime.YearDay() == 92 || elementTime.YearDay() == 193 || elementTime.YearDay() == 274 {
-			Labels = append(Labels,SvgGraphLabel{
+			Labels = append(Labels, SvgGraphLabel{
 				X: x,
 				Label: elementTime.Format("Jan"),
 			})
@@ -159,8 +160,17 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		Weeks: Weeks,
 		Labels: Labels,
 		MLables: MLables,
+		WeekDays: weekDays,
 	}
 
 	d.SvgGraphData.Width = ((len(d.SvgGraphData.Days) - 1) * 10) + 10
 	return
+}
+
+func (d *ViewData) buildWeekGraph() {
+	// Get week max
+
+	// Get week mean
+
+	// Get week days max
 }

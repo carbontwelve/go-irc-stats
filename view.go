@@ -11,6 +11,7 @@ type View struct {}
 func (v View) Parse(filename string, data ViewData) (err error) {
 	funcMap := template.FuncMap{
 		"tableflip": func () string { return "(╯°□°）╯︵ ┻━┻" },
+		"mul": func (x, y int64) int64 { return x * y },
 	}
 	template, err := template.New(filename).Funcs(funcMap).ParseFiles(filename)
 	if err != nil {
