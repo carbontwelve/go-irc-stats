@@ -1,4 +1,4 @@
-package UnixDiff
+package helpers
 
 import (
 	"time"
