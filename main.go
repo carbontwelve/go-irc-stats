@@ -47,5 +47,14 @@ func main() {
 	// Once we are finished dump to disk cache file
 	lr.Database.Save(config.DatabaseLocation)
 
+	vd := ViewData{
+		"PageTitle" : config.PageTitle,
+		"PageDescription" : config.PageDescription,
+		"Active" : "hello world",
+	}
+	v := View{}
+	v.Load("template.html")
+	v.Parse(vd)
+
 	//fmt.Printf("%v\n", lr.Database)
 }

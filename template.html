@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    {{if .PageTitle}}<title>{{.PageTitle}}</title>{{end}}
+    {{if .PageDescription}}<meta name="description" content="{{.PageDescription}}">{{end}}
+</head>
+<body>
+
+{{if eq .Active "accueil"}}
+Its working!
+{{end}}
+
+</body>
+</html>
