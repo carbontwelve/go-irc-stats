@@ -18,6 +18,7 @@ type Database struct {
 	Users         map[string]User // Users
 	LastGenerated int64           // Unix timestamp of last generated
 	Version       string          // Version of application that this works with, if the version changes we need to check for incompatibility
+	Channel       Channel         // Channel counters for storage
 }
 
 //
