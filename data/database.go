@@ -107,3 +107,15 @@ func (d Database) GetUser(nick string) (user User, err error) {
 	user = d.Users[nick]
 	return
 }
+
+//
+// At some point this needs to check the version
+// @todo implement this
+//
+func (d Database) CheckVersion(version string) (ok bool, err error) {
+	ok = (d.Version != version)
+	if (ok == false) {
+		err = errors.New("This version of go-irc-stats is incompatible with the current cached datastore.")
+	}
+	return
+}
