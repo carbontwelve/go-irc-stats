@@ -14,7 +14,7 @@ func firstDayOfNextYear(t time.Time) time.Time {
 
 // Days diff for time.Time
 // a - b in days
-func DaysDiff(a, b time.Time) (days int) {
+func DaysDiff(a, b time.Time) (days int64) {
 	cur := b
 	for cur.Year() < a.Year() {
 		// add 1 to count the last day of the year too.
@@ -30,6 +30,6 @@ func DaysDiff(a, b time.Time) (days int) {
 
 // Days diff for unix time
 // a - b in days
-func DaysDiffUnix(unixTimeA int64, unixTimeB int64) (days int) {
+func DaysDiffUnix(unixTimeA int64, unixTimeB int64) (days int64) {
 	return DaysDiff(time.Unix(unixTimeA, 0), time.Unix(unixTimeB, 0))
 }
