@@ -1,4 +1,4 @@
-package datastore
+package data
 
 type MaxWeek struct {
 	Week  string
@@ -21,6 +21,9 @@ type Averages struct {
 	WeekDay float64 	// Average lines by week day (monday - sunday)
 }
 
+//
+// Channel Statistics
+//
 type Channel struct {
 	Name      string   	// Channel Name
 	UserCount int64    	// Total Number of users in Channel
@@ -32,6 +35,7 @@ type Channel struct {
 	Averages  Averages 	// Calculated Averages
 	First     int64    	// Unix timestamp of the first line in Channel
 	Last      int64    	// Unix timestamp of the last line in Channel
+	HoursAndDaysStats	// Inherited Hour And Days methods
 }
 
 
