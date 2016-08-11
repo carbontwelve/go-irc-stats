@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/carbontwelve/go-irc-stats/helpers"
 	"time"
+	"math"
+	"strconv"
 )
 
 type SvgGraphLabel struct {
@@ -19,11 +21,12 @@ type SvgGraphDay struct {
 }
 
 type SvgGraphWeek struct {
-	X     int64
-	Y     int64
-	Lines int64
-	First string
-	Last  string
+	X      int64
+	Y      int64
+	Height int64
+	Lines  int64
+	First  string
+	Last   string
 }
 
 type SvgGraphData struct {
@@ -32,15 +35,17 @@ type SvgGraphData struct {
 	Labels   []SvgGraphLabel
 	MLables  []SvgGraphLabel
 	WeekDays [7]int
-	Width    int
+	Width    int64
 }
 
 type ViewData struct {
 	PageTitle       string
 	PageDescription string
 	HeatMapInterval uint
+	HeatMapKey	[6]int
 	Database        Database
 	SvgGraphData    SvgGraphData
+	WeeksMax        uint
 }
 
 func (d ViewData) TotalDays() int {
@@ -54,6 +59,11 @@ func (d *ViewData) buildDayHeatMapDays() () {
 	Weeks := make([]SvgGraphWeek, (totalDays / 7) + 1)
 	Labels := make([]SvgGraphLabel, 1)
 	MLables := make([]SvgGraphLabel, 1)
+
+	// Create heatmap key
+	for i := 1; i <6; i ++ {
+		d.HeatMapKey[i] = int(d.HeatMapInterval) * i
+	}
 
 	var (
 		weekDays [7]int
@@ -107,17 +117,16 @@ func (d *ViewData) buildDayHeatMapDays() () {
 			Last: lastWeek,
 		}
 
-		if (lines < d.HeatMapInterval * 5) {
-			cssClass = "scale-5"
-		} else if (lines < d.HeatMapInterval * 4) {
-			cssClass = "scale-4"
-		} else if (lines < d.HeatMapInterval * 3) {
-			cssClass = "scale-3"
-		} else if (lines < d.HeatMapInterval * 2) {
-			cssClass = "scale-2"
-		} else if (lines < d.HeatMapInterval) {
-			cssClass = "scale-1"
-		} else {
+		// Identify class
+		classSet := false
+		for i := 1; i < 6; i ++ {
+			if int(lines) < d.HeatMapKey[i] {
+				cssClass = "scale-" + strconv.Itoa(i)
+				classSet = true
+				break
+			}
+		}
+		if classSet == false {
 			cssClass = "scale-6"
 		}
 
@@ -163,12 +172,25 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		WeekDays: weekDays,
 	}
 
-	d.SvgGraphData.Width = ((len(d.SvgGraphData.Days) - 1) * 10) + 10
+	d.SvgGraphData.Width = (d.SvgGraphData.Days[len(d.SvgGraphData.Days)-1].X * 10) + 10
 	return
 }
 
 func (d *ViewData) buildWeekGraph() {
 	// Get week max
+	for _, w := range (d.SvgGraphData.Weeks) {
+		if uint(w.Lines) > uint(d.WeeksMax) {
+			d.WeeksMax = uint(w.Lines)
+		}
+	}
+
+	// Get Weeks.Height
+	tmpWeeks := make([]SvgGraphWeek, len(d.SvgGraphData.Weeks))
+	for k, w := range (d.SvgGraphData.Weeks) {
+		w.Height = int64(math.Floor(float64(w.Lines) / float64(d.WeeksMax) * 100))
+		tmpWeeks[k] = w
+	}
+	d.SvgGraphData.Weeks = tmpWeeks
 
 	// Get week mean
 

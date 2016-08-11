@@ -55,6 +55,7 @@ func main() {
 	}
 
 	vd.buildDayHeatMapDays()
+	vd.buildWeekGraph()
 
 	v := View{}
 	err := v.Parse("template.html", vd)
@@ -62,6 +63,4 @@ func main() {
 	if (err != nil){
 		panic(err)
 	}
-
-	fmt.Printf("%v\n", vd.SvgGraphData.Width)
 }

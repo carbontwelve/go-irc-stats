@@ -515,44 +515,60 @@
         <div><span>Days</span> {{ .TotalDays }}</div>
     </div>
 
-    <p>{{tableflip}}</p>
-
     <div id="charts">
-
         <div class="charts">
-            <svg width="{{ .SvgGraphData.Width }}px" height="275px" version="1.1"
-                 xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 xmlns:data="http://www.example.com/data">
-                <g id="weeks" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(0,110) scale(1,-1)">
-                    {{range $week := .SvgGraphData.Weeks }}
-                    <rect x="{{mul $week.X 10}}" y="0" width="9"
-                          height="<%= ((week[:lines].to_f / @weeks_max) * 100).round %>"
-                          data:lines="{{$week.Lines}}" data:first="{{$week.First}}"
-                          data:last="{{$week.Last}}"></rect>
-                    {{end}}
-                </g>
+            <div class="chart">
+                <svg width="{{ .SvgGraphData.Width }}px" height="275px" version="1.1"
+                     xmlns="http://www.w3.org/2000/svg"
+                     xmlns:xlink="http://www.w3.org/1999/xlink"
+                     xmlns:data="http://www.example.com/data">
+                    <g id="weeks" stroke="none" stroke-width="1" fill="#8495ab"
+                       transform="translate(0,110) scale(1,-1)">
+                        {{range $week := .SvgGraphData.Weeks }}
+                        <rect x="{{mul $week.X 10}}" y="0" width="9"
+                              height="{{$week.Height}}"
+                              data:lines="{{$week.Lines}}" data:first="{{$week.First}}"
+                              data:last="{{$week.Last}}"></rect>
+                        {{end}}
+                    </g>
 
-                <g id="days" stroke="none" stroke-width="1" fill="none" transform="translate(0,152)">
-                    <% @days.each do |day| -%>
-                    <rect x="<%= day[:x] * 10 %>" y="<%= (day[:y] * 10) %>" width="9" height="9"
-                          class="<%= day[:class] %>" data:date="<%= day[:date] %>"
-                          data:lines="<%= day[:lines] %>"></rect>
-                    <% end -%>
-                </g>
+                    <g id="days" stroke="none" stroke-width="1" fill="none" transform="translate(0,152)">
+                        {{range $day := .SvgGraphData.Days }}
+                        <rect x="{{mul $day.X 10}}" y="{{mul $day.Y 10}}" width="9" height="9"
+                              class="{{$day.Class}}" data:date="{{$day.Date}}"
+                              data:lines="{{$day.Lines}}"></rect>
+                        {{end}}
+                    </g>
 
-                <g class="labels" stroke="none" stroke-width="0" fill="black" transform="translate(0,111)">
-                    <% @labels.each do |label| -%>
-                    <line x1="<%= (label[:x] * 10) + 4.5 %>" y1="0" x2="<%= (label[:x] * 10) + 4.5 %>" y2="10"
-                          stroke="#bbb" stroke-width="1"/>
-                    <text x="<%= (label[:x] * 10) + 4.5 %>" y="25" text-anchor="middle"><%= label[:month] %></text>
-                    <line x1="<%= (label[:x] * 10) + 4.5 %>" y1="30" x2="<%= (label[:x] * 10) + 4.5 %>" y2="40"
-                          stroke="#bbb" stroke-width="1"/>
-                    <% end -%>
-                </g>
-            </svg>
+                    <g class="labels" stroke="none" stroke-width="0" fill="black" transform="translate(0,111)">
+                        {{range $label := .SvgGraphData.Labels }}
+                        <line x1="{{labelX $label.X}}" y1="0" x2="{{labelX $label.X}}" y2="10"
+                              stroke="#bbb" stroke-width="1"/>
+                        <text x="{{labelX $label.X}}" y="25" text-anchor="middle">{{$label.Label}}</text>
+                        <line x1="{{labelX $label.X}}" y1="30" x2="{{labelX $label.X}}" y2="40"
+                              stroke="#bbb" stroke-width="1"/>
+                        {{end}}
+                    </g>
+                </svg>
+            </div>
+
+            <div class="key">
+
+                {{range $key, $interval := .HeatMapKey}}
+                {{if gt $key 0}}
+                <div class="scale-{{$key}}">{{$interval}}</div>
+                {{end}}
+                {{end}}
+            </div>
+
+            <div class="hover">
+                <div class="date"></div>
+                <div class="lines"></div>
+            </div>
         </div>
     </div>
+
+    <hr>
 
 </main>
 </body>
