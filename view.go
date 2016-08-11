@@ -21,6 +21,7 @@ func (v View) Parse(filename string, data ViewData) (err error) {
 			return strconv.FormatFloat(xx, 'f', 6, 64)
 		},
 		"comma": humanize.Comma,
+		"int64": func (x int) int64 { return int64(x) },
 	}
 	template, err := template.New(filename).Funcs(funcMap).ParseFiles(filename)
 	if err != nil {

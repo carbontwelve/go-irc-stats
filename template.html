@@ -553,7 +553,6 @@
             </div>
 
             <div class="key">
-
                 {{range $key, $interval := .HeatMapKey}}
                 {{if gt $key 0}}
                 <div class="scale-{{$key}}">{{$interval}}</div>
@@ -569,6 +568,45 @@
     </div>
 
     <hr>
+
+    <h2>Most Active Times</h2>
+    <div id="hourly">
+        <div class="chart">
+            <svg width="340px" height="170px" version="1.1"
+                 xmlns="http://www.w3.org/2000/svg"
+                 xmlns:xlink="http://www.w3.org/1999/xlink"
+                 xmlns:data="http://www.example.com/data">
+                <g id="hours" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(0,100) scale(1,-1)">
+                    {{range $bar := .SvgGraphData.MostActiveHours}}
+                    <rect x="{{$bar.X}}" y="0" width="9" height="{{$bar.Height}}"></rect>
+                    {{end}}
+                </g>
+                <g class="labels" transform="translate(0,115)">
+                    <text x="0"   y="0">A</text>
+                    <text x="40"  y="0">4</text>
+                    <text x="80"  y="0">8</text>
+                    <text x="120" y="0">P</text>
+                    <text x="160" y="0">4</text>
+                    <text x="200" y="0">8</text>
+                </g>
+
+                <g id="weekdays" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(270,100) scale(1,-1)">
+                    <% @weekdays.each_with_index do |day, index| -%>
+                    <rect x="<%= index * 10 %>" y="0" width="9" height="<%= ((day.to_f / @weekdays_max) * 100).round %>" data:lines="<%= day %>"></rect>
+                    <% end -%>
+                </g>
+                <g class="labels" transform="translate(270,115)">
+                    <text x="10" y="0">M</text>
+                    <text x="30" y="0">W</text>
+                    <text x="50" y="0">F</text>
+                </g>
+            </svg>
+        </div>
+        <div class="hover">
+            <div class="timezone-label">UTC</div>
+            <div class="lines"></div>
+        </div>
+    </div>
 
     <footer>
         <div>A golang port by <a href="http://photogabble.co.uk">Simon Dann</a> of <a href="https://github.com/0x263b/Stats">0x263b/Stats</a></div>

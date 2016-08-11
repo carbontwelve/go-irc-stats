@@ -1,7 +1,7 @@
 package main
 
 type HoursAndDaysStats struct {
-	Hours [23]int64        // lines per 24 hours
+	Hours [24]int64        // lines per 24 hours @todo check that all 24 elements are being filled...
 	Days  map[string]int64 // words per day
 }
 
@@ -36,8 +36,18 @@ func (s HoursAndDaysStats) FindPeakDay() (date string, total int64) {
 	return
 }
 
+func (s HoursAndDaysStats) FindPeakHour() (hour int64, total int64) {
+	for h, t := range(s.Hours) {
+		if (t > total) {
+			hour = int64(h)
+			total = t
+		}
+	}
+	return
+}
+
 func (s *HoursAndDaysStats) Initiate() {
-	for i := 0; i < 23; i++ {
+	for i := 0; i < 24; i++ {
 		s.Hours[i] = 0
 	}
 	s.Days = make(map[string]int64)

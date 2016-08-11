@@ -7,6 +7,11 @@ import (
 	"strconv"
 )
 
+type SvgGraphMostActiveHours struct {
+	X      int64
+	Height int64
+}
+
 type SvgGraphLabel struct {
 	X     int64
 	Label string
@@ -30,19 +35,20 @@ type SvgGraphWeek struct {
 }
 
 type SvgGraphData struct {
-	Days     []SvgGraphDay
-	Weeks    []SvgGraphWeek
-	Labels   []SvgGraphLabel
-	MLables  []SvgGraphLabel
-	WeekDays [7]int
-	Width    int64
+	Days            []SvgGraphDay
+	Weeks           []SvgGraphWeek
+	Labels          []SvgGraphLabel
+	MLables         []SvgGraphLabel
+	MostActiveHours []SvgGraphMostActiveHours
+	WeekDays        [7]int
+	Width           int64
 }
 
 type ViewData struct {
 	PageTitle       string
 	PageDescription string
 	HeatMapInterval uint
-	HeatMapKey	[6]int
+	HeatMapKey      [6]int
 	Database        Database
 	SvgGraphData    SvgGraphData
 	WeeksMax        uint
@@ -61,7 +67,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 	MLables := make([]SvgGraphLabel, 1)
 
 	// Create heatmap key
-	for i := 1; i <6; i ++ {
+	for i := 1; i < 6; i ++ {
 		d.HeatMapKey[i] = int(d.HeatMapInterval) * i
 	}
 
@@ -173,7 +179,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		WeekDays: weekDays,
 	}
 
-	d.SvgGraphData.Width = (d.SvgGraphData.Days[len(d.SvgGraphData.Days)-1].X * 10) + 10
+	d.SvgGraphData.Width = (d.SvgGraphData.Days[len(d.SvgGraphData.Days) - 1].X * 10) + 10
 	return
 }
 
@@ -193,6 +199,15 @@ func (d *ViewData) buildWeekGraph() {
 	}
 	d.SvgGraphData.Weeks = tmpWeeks
 
+	// Get Most Active Times
+	tmpMostActiveTimes := make([]SvgGraphMostActiveHours, len(d.Database.Hours))
+	for hour, lines := range d.Database.Hours {
+		tmpMostActiveTimes[hour] = SvgGraphMostActiveHours{
+			X: int64(hour * 10),
+			Height: int64(math.Floor(float64(lines) / float64(d.Database.Channel.MaxHour.Lines) * 100)),
+		}
+	}
+	d.SvgGraphData.MostActiveHours = tmpMostActiveTimes
 	// Get week mean
 
 	// Get week days max

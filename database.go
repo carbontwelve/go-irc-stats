@@ -14,11 +14,17 @@ type MaxDay struct {
 	Lines int64
 }
 
+type MaxHour struct {
+	Hour  int64
+	Lines int64
+}
+
 type Channel struct {
 	UserCount int64
 	LineCount int64
 	WordCount int64
 	MaxDay    MaxDay
+	MaxHour   MaxHour
 	Mean      float64
 	First     int64
 	Last      int64
@@ -137,6 +143,7 @@ func (d *Database) calculateDailyMeanLines() {
 
 func (d *Database) calculatePeakActivity() {
 	d.Channel.MaxDay.Day, d.Channel.MaxDay.Lines = d.FindPeakDay()
+	d.Channel.MaxHour.Hour, d.Channel.MaxHour.Lines = d.FindPeakHour()
 }
 
 func (d *Database) calculateActiveUsers() {
