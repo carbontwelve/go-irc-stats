@@ -29,8 +29,4 @@ EXIT /B 0
 go build %LDFLAGS% -o ./bin/%BINARY%
 @ECHO OFF
 copy "./config.yaml" "./bin/config.yaml" > nul
-copy "./irctest.log" "./bin/irctest.log" > nul
-cd bin
-%BINARY%
-cd ..
 EXIT /B 0

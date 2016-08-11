@@ -12,7 +12,7 @@ pagetitle: Title
 pagedescription: Default Description
 
 # Scale for the heatmap (integer)
-heatmapinterval: 10
+heatmapinterval: 50
 
 # Ignore list
 ignore:
