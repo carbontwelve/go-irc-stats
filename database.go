@@ -11,13 +11,13 @@ import (
 
 type MaxDay struct {
 	Day   string
-	Lines uint
+	Lines int64
 }
 
 type Channel struct {
-	UserCount uint
-	LineCount uint
-	WordCount uint
+	UserCount int64
+	LineCount int64
+	WordCount int64
 	MaxDay    MaxDay
 	Mean      float64
 	First     int64
@@ -110,7 +110,7 @@ func (d Database) GetUser(nick string) (user User, err error) {
 
 func (d *Database) Calculate() {
 	// Set Channel User counter
-	d.Channel.UserCount = uint(len(d.Users))
+	d.Channel.UserCount = int64(len(d.Users))
 
 	// Get Average lines / day
 	d.calculateDailyMeanLines()
@@ -124,8 +124,8 @@ func (d *Database) Calculate() {
 
 func (d *Database) calculateDailyMeanLines() {
 	var (
-		sum uint
-		size uint
+		sum int64
+		size int64
 	)
 
 	for _, u := range (d.Users) {
@@ -149,8 +149,8 @@ func (d *Database) calculateActiveUsers() {
 
 	for _, u := range (d.Users) {
 		var (
-			wordCount uint
-			daysActive uint
+			wordCount int64
+			daysActive int64
 		)
 
 		// Check to see if user has been active within our time period (default past 30 days)

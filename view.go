@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/dustin/go-humanize"
 	"html/template"
 	"io/ioutil"
 	"bytes"
@@ -19,6 +20,7 @@ func (v View) Parse(filename string, data ViewData) (err error) {
 			xx = xx + 4.5
 			return strconv.FormatFloat(xx, 'f', 6, 64)
 		},
+		"comma": humanize.Comma,
 	}
 	template, err := template.New(filename).Funcs(funcMap).ParseFiles(filename)
 	if err != nil {

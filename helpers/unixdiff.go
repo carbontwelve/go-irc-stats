@@ -18,11 +18,11 @@ func DaysDiff(a, b time.Time) (days int64) {
 	cur := b
 	for cur.Year() < a.Year() {
 		// add 1 to count the last day of the year too.
-		days += lastDayOfYear(cur).YearDay() - cur.YearDay() + 1
+		days += int64(lastDayOfYear(cur).YearDay()) - int64(cur.YearDay()) + 1
 		cur = firstDayOfNextYear(cur)
 	}
-	days += a.YearDay() - cur.YearDay()
-	if b.AddDate(0, 0, days).After(a) {
+	days += int64(a.YearDay()) - int64(cur.YearDay())
+	if b.AddDate(0, 0, int(days)).After(a) {
 		days -= 1
 	}
 	return days

@@ -4,29 +4,29 @@ type User struct {
 	Username   string
 	Url        string
 	Avatar     string
-	LineCount  uint
-	WordCount  uint
-	DaysActive uint
-	CharCount  uint
-	WordsLine  uint
-	LineLength uint
-	LinesDay   uint
-	WordsDay   uint
-	Vocabulary uint
-	DaysTotal  uint
+	LineCount  int64
+	WordCount  int64
+	DaysActive int64
+	CharCount  int64
+	WordsLine  int64
+	LineLength int64
+	LinesDay   int64
+	WordsDay   int64
+	Vocabulary int64
+	DaysTotal  int64
 	FirstSeen  int64
 	LastSeen   int64
-	MaxHours   uint
+	MaxHours   int64
 	Words      []string
 	HoursAndDaysStats
 }
 
 func (u *User) CalculateTotals() {
-	u.Vocabulary = uint(len(u.Words))
-	u.DaysTotal = uint(len(u.Days))
+	u.Vocabulary = int64(len(u.Words))
+	u.DaysTotal = int64(len(u.Days))
 
 	if (u.LineCount > 0) {
-		u.WordsLine = uint(u.WordCount / u.LineCount)
+		u.WordsLine = int64(u.WordCount / u.LineCount)
 	} else {
 		u.WordsLine = 0
 	}

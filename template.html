@@ -509,10 +509,10 @@
 
     <h2>Total Activity</h2>
     <div class="activity-numbers">
-        <div><span>Messages</span> {{ .Database.Channel.LineCount }}</div>
-        <div><span>Words</span> {{ .Database.Channel.WordCount }}</div>
-        <div><span>Users</span> {{ .Database.Channel.UserCount }}</div>
-        <div><span>Days</span> {{ .TotalDays }}</div>
+        <div><span>Messages</span> {{ .Database.Channel.LineCount | comma }}</div>
+        <div><span>Words</span> {{ .Database.Channel.WordCount | comma }}</div>
+        <div><span>Users</span> {{ .Database.Channel.UserCount | comma }}</div>
+        <div><span>Days</span> {{ .TotalDays | comma }}</div>
     </div>
 
     <div id="charts">

@@ -48,7 +48,7 @@ type ViewData struct {
 	WeeksMax        uint
 }
 
-func (d ViewData) TotalDays() int {
+func (d ViewData) TotalDays() int64 {
 	return helpers.DaysDiffUnix(d.Database.Channel.Last, d.Database.Channel.First)
 }
 
@@ -75,10 +75,11 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		weekLines int64
 		lines int64
 		cssClass string
+		i int64
 	)
 
-	for i := 0; i < totalDays; i++ {
-		elementTime := timeNow.AddDate(0, 0, -(totalDays - i))
+	for i = 0; i < totalDays; i++ {
+		elementTime := timeNow.AddDate(0, 0, int(-(totalDays - i)))
 
 		// Work out first week
 		if (i == 0) {

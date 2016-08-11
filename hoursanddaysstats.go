@@ -1,8 +1,8 @@
 package main
 
 type HoursAndDaysStats struct {
-	Hours [23]uint        // lines per 24 hours
-	Days  map[string]uint // words per day
+	Hours [23]int64        // lines per 24 hours
+	Days  map[string]int64 // words per day
 }
 
 // Increment Hours by one
@@ -11,7 +11,7 @@ func (s *HoursAndDaysStats) IncrementHour(hour uint) {
 }
 
 // Increment Days by an input number
-func (s *HoursAndDaysStats) IncrementDay(date string, increment uint) {
+func (s *HoursAndDaysStats) IncrementDay(date string, increment int64) {
 	if _, ok := s.Days[date]; ok {
 		s.Days[date] += increment
 	} else {
@@ -26,7 +26,7 @@ func (s HoursAndDaysStats) HasDay(day string) bool {
 	return false
 }
 
-func (s HoursAndDaysStats) FindPeakDay() (date string, total uint) {
+func (s HoursAndDaysStats) FindPeakDay() (date string, total int64) {
 	for d, t := range (s.Days) {
 		if (t > total) {
 			date = d
@@ -40,5 +40,5 @@ func (s *HoursAndDaysStats) Initiate() {
 	for i := 0; i < 23; i++ {
 		s.Hours[i] = 0
 	}
-	s.Days = make(map[string]uint)
+	s.Days = make(map[string]int64)
 }
