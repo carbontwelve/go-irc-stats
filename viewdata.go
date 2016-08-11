@@ -7,8 +7,9 @@ import (
 	"strconv"
 )
 
-type SvgGraphMostActiveHours struct {
+type SvgGraphItem struct {
 	X      int64
+	Value  int64
 	Height int64
 }
 
@@ -39,8 +40,8 @@ type SvgGraphData struct {
 	Weeks           []SvgGraphWeek
 	Labels          []SvgGraphLabel
 	MLables         []SvgGraphLabel
-	MostActiveHours []SvgGraphMostActiveHours
-	WeekDays        [7]int
+	MostActiveHours []SvgGraphItem
+	MostActiveDays  [7]SvgGraphItem
 	Width           int64
 }
 
@@ -52,6 +53,7 @@ type ViewData struct {
 	Database        Database
 	SvgGraphData    SvgGraphData
 	WeeksMax        uint
+	WeekDayMax      int64
 }
 
 func (d ViewData) TotalDays() int64 {
@@ -72,7 +74,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 	}
 
 	var (
-		weekDays [7]int
+		weekDays [7]SvgGraphItem
 		firstWeek string
 		lastWeek string
 		x int64
@@ -83,6 +85,10 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		cssClass string
 		i int64
 	)
+
+	for i = 0; i < int64(len(weekDays)); i++ {
+		weekDays[i].X = i
+	}
 
 	for i = 0; i < totalDays; i++ {
 		elementTime := timeNow.AddDate(0, 0, int(-(totalDays - i)))
@@ -114,7 +120,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 
 		weekLines += int64(lines)
 		lastWeek = elementTime.Format("Jan-01")
-		weekDays[elementTime.Weekday()] += int(lines)
+		weekDays[elementTime.Weekday()].Value += lines
 
 		Weeks[x] = SvgGraphWeek{
 			X: x,
@@ -176,7 +182,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		Weeks: Weeks,
 		Labels: Labels,
 		MLables: MLables,
-		WeekDays: weekDays,
+		MostActiveDays: weekDays, // This is a preliminary pass because its more efficient to do it here.
 	}
 
 	d.SvgGraphData.Width = (d.SvgGraphData.Days[len(d.SvgGraphData.Days) - 1].X * 10) + 10
@@ -200,14 +206,33 @@ func (d *ViewData) buildWeekGraph() {
 	d.SvgGraphData.Weeks = tmpWeeks
 
 	// Get Most Active Times
-	tmpMostActiveTimes := make([]SvgGraphMostActiveHours, len(d.Database.Hours))
+	tmpMostActiveTimes := make([]SvgGraphItem, len(d.Database.Hours))
 	for hour, lines := range d.Database.Hours {
-		tmpMostActiveTimes[hour] = SvgGraphMostActiveHours{
+		tmpMostActiveTimes[hour] = SvgGraphItem{
 			X: int64(hour * 10),
+			Value: lines,
 			Height: int64(math.Floor(float64(lines) / float64(d.Database.Channel.MaxHour.Lines) * 100)),
 		}
 	}
 	d.SvgGraphData.MostActiveHours = tmpMostActiveTimes
+
+	// Get weekday max
+	for _, v := range(d.SvgGraphData.MostActiveDays) {
+		if v.Value > d.WeekDayMax {
+			d.WeekDayMax = v.Value
+		}
+	}
+
+	// Get Most Active Days of Week
+	var tmpMostActiveDays [7]SvgGraphItem
+	for day, obj := range d.SvgGraphData.MostActiveDays {
+		tmpMostActiveDays[day] = SvgGraphItem{
+			X: obj.X * 10,
+			Height: int64(math.Floor(float64(obj.Value) / float64(d.WeekDayMax) * 100)),
+		}
+	}
+	d.SvgGraphData.MostActiveDays = tmpMostActiveDays
+
 	// Get week mean
 
 	// Get week days max

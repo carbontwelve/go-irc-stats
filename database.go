@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+//
+// The calculation methods below need to be moved out of this file and into a more appropriate place. Channel also needs
+// to be moved to its own section and de-linked from Database
+//
+
 type MaxDay struct {
 	Day   string
 	Lines int64
@@ -114,6 +119,10 @@ func (d Database) GetUser(nick string) (user User, err error) {
 	return
 }
 
+//
+// BUG: Should this be calculating at all? Isn't that the task of viewdata? None of the calculated totals is nessessary
+// to be saved. The saved data should be the parsed data. Move this to another section within the execution order.
+//
 func (d *Database) Calculate() {
 	// Set Channel User counter
 	d.Channel.UserCount = int64(len(d.Users))
@@ -128,6 +137,9 @@ func (d *Database) Calculate() {
 	d.calculateActiveUsers()
 }
 
+//
+// BUG: User.DaysActive is not initiated (is it ever?) before this is run, resulting in a daily mean of zero
+//
 func (d *Database) calculateDailyMeanLines() {
 	var (
 		sum int64
@@ -135,9 +147,10 @@ func (d *Database) calculateDailyMeanLines() {
 	)
 
 	for _, u := range (d.Users) {
-		sum++
+		sum += u.DaysActive
 		size += u.LineCount
 	}
+	fmt.Printf("Sum: %d, Size: %d, # Users: %d\n", sum, size, len(d.Users))
 	d.Channel.Mean = float64(sum) / float64(size)
 }
 

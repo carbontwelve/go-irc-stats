@@ -591,9 +591,9 @@
                 </g>
 
                 <g id="weekdays" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(270,100) scale(1,-1)">
-                    <% @weekdays.each_with_index do |day, index| -%>
-                    <rect x="<%= index * 10 %>" y="0" width="9" height="<%= ((day.to_f / @weekdays_max) * 100).round %>" data:lines="<%= day %>"></rect>
-                    <% end -%>
+                    {{range $bar := .SvgGraphData.MostActiveDays}}
+                    <rect x="{{ $bar.X }}" y="0" width="9" height="{{$bar.Height }}" data:lines="{{$bar.Value}}"></rect>
+                    {{end}}
                 </g>
                 <g class="labels" transform="translate(270,115)">
                     <text x="10" y="0">M</text>
@@ -607,6 +607,15 @@
             <div class="lines"></div>
         </div>
     </div>
+
+    <div class="activity-numbers">
+        <div><span>Average Day</span> {{.Database.Channel.Mean}}<small> lines</small></div>
+        <div><span>Average Week</span> <%= add_commas(@weeks_mean.round) %><small> lines</small></div>
+        <div><span>Most Active Day</span> {{.Database.Channel.MaxDay.Lines}}<small> lines</small></div>
+        <div><span>Most Active Week</span> {{.WeeksMax}}<small> lines</small></div>
+    </div>
+
+    <hr>
 
     <footer>
         <div>A golang port by <a href="http://photogabble.co.uk">Simon Dann</a> of <a href="https://github.com/0x263b/Stats">0x263b/Stats</a></div>
