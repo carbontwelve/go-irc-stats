@@ -17,7 +17,7 @@ type SvgGraphDay struct {
 	Y     int64
 	Date  string
 	Class string
-	Lines uint
+	Lines int64
 }
 
 type SvgGraphWeek struct {
@@ -73,7 +73,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		y int64
 		mx int64
 		weekLines int64
-		lines uint
+		lines int64
 		cssClass string
 	)
 
@@ -100,7 +100,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 		}
 
 		if d.Database.HasDay(elementTime.Format("2006-02-01")) {
-			lines = d.Database.Days[elementTime.Format("2006-02-01")]
+			lines = int64(d.Database.Days[elementTime.Format("2006-02-01")])
 		} else {
 			lines = 0
 		}
