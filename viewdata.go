@@ -56,7 +56,7 @@ func (d *ViewData) buildDayHeatMapDays() () {
 	timeNow := time.Now()
 	totalDays := d.TotalDays()
 	Days := make([]SvgGraphDay, totalDays)
-	Weeks := make([]SvgGraphWeek, (totalDays / 7) + 1)
+	Weeks := make([]SvgGraphWeek, (totalDays / 7) + 2) // there is a n+1 error where Weeks starts at 0 by the 0 element is never filled, thus the +2
 	Labels := make([]SvgGraphLabel, 1)
 	MLables := make([]SvgGraphLabel, 1)
 
