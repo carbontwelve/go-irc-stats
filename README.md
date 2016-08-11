@@ -4,9 +4,11 @@ This is an attempted port of the Ruby based IRC stats generator [0x263b/Stats](h
 
 ## Build instructions
 
-To build on linux run `make clean-run` this will build the executable `logstats`. You will need to place `logstats` and `config.yaml` into your choice of detination folder. Amend `config.yaml` and give either a relative or absolute path to the logfile location before executing `logstats`.
+To build on linux run `make clean-run` this will build the executable `logstats`. You will need to place `logstats`, `template.html` and `config.yaml` into your choice of destination folder. Amend `config.yaml` and give either a relative or absolute path to the logfile location before executing `logstats`.
 
-To build on windows run `make build` (I dont have make installed on my windows machine so I wrote the make.bat with similar functionality). This will create a folder locally called `bin` where `logstats.exe` and `config.yaml` can be found.
+To build on windows run `make build` (I dont have make installed on my windows machine so I wrote the make.bat with similar functionality). This will create a folder locally called `bin` where `logstats.exe`, `template.html` and `config.yaml` can be found.
+
+To generate a logfile to test this with you can run `php createtestlog.php > irctest.log` to generate a logfile containing 720 days worth of randomised data.
 
 ## To do
 
