@@ -1,5 +1,25 @@
 package ircstats
 
+type Seen struct {
+	FirstSeen  int64
+	LastSeen   int64
+}
+
+func (s *Seen) UpdateSeen(seen int64) {
+	if (s.FirstSeen == 0) {
+		s.FirstSeen = seen
+	}
+	if (s.LastSeen == 0) {
+		s.LastSeen = seen
+	}
+	if (s.FirstSeen > seen) {
+		s.FirstSeen = seen
+	}
+	if (s.LastSeen < seen) {
+		s.LastSeen = seen
+	}
+}
+
 type HoursAndDaysStats struct {
 	Hours [24]int64        // lines per 24 hours @todo check that all 24 elements are being filled...
 	Days  map[string]int64 // words per day

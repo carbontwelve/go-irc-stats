@@ -14,11 +14,10 @@ type User struct {
 	WordsDay   int64
 	Vocabulary int64
 	DaysTotal  int64
-	FirstSeen  int64
-	LastSeen   int64
 	MaxHours   int64
 	Words      []string
 	HoursAndDaysStats
+	Seen
 }
 
 func (u *User) CalculateTotals() {
@@ -35,8 +34,9 @@ func (u *User) CalculateTotals() {
 }
 
 func NewUser(nick string, timestamp int64) User {
-	u := User{Username: nick, FirstSeen: timestamp, LastSeen: timestamp}
+	u := User{Username: nick}
 	u.Initiate()
+	u.UpdateSeen(timestamp)
 	return u
 }
 

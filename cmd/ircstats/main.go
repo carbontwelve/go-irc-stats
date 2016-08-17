@@ -62,8 +62,14 @@ The options are:
 		log.Fatal(logReaderErr)
 	}
 
-	//// Load log file and parse any new lines
-	//lr.LoadFile()
+	// @todo calculate stats
+
+	// Save database to disk
+	dbSaveErr := db.Save(config.DatabaseLocation)
+	if (logReaderErr != nil) {
+		log.Fatal(dbSaveErr)
+	}
+
 //
 	//// Get Database to calculate stats and totals
 	//lr.Database.Calculate()

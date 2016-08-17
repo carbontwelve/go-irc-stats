@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"fmt"
 	"time"
+	"strings"
 )
 
 //
@@ -62,10 +63,9 @@ func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
 }
 
 func (lr IrcLogReader) parseLine(line string, isAction bool, db *Database) {
-
 	var (
 		parsed[][]string
-		//user User
+		user User
 	)
 
 	// timestamp = [0][1]
@@ -80,10 +80,68 @@ func (lr IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	// Convert timestamp into unix timestamp and if this is a line that
 	// we have already parsed do nothing and return
 	lineTime := lr.ParseTime(parsed[0][1])
-	if lineTime.Unix() <= db.Channel.Last {
+	if lineTime.Unix() <= db.Channel.LastSeen {
 		return
 	}
 
+	// Parse nick and check against ignore list
+	lineNick := strings.Trim(strings.ToLower(parsed[0][2]), " ")
+	if lr.IsUserIgnored(lineNick) == true {
+		return
+	}
+
+	// Map the nickname to one set in configuration
+	lineNick = lr.MapNick(lineNick)
+
+	// Parse message
+	lineMessage := strings.Trim(parsed[0][3], " ")
+
+	// If this is an empty line lets ignore it
+	if lineMessage == "" {
+		return
+	}
+
+	// Get user, if not found make a new user
+	if db.HasUser(lineNick) == true {
+		user, _ = db.GetUser(lineNick)
+	} else {
+		user = NewUser(lineNick, lineTime.Unix())
+	}
+
+	lineMessageCharCount := int64(strings.Count(lineMessage, "") - 1)
+	lineMessageWords := strings.Split(strings.ToLower(lineMessage), " ")
+	lineMessageWordCount := int64(len(lineMessageWords))
+
+	// Append to user words array (@todo this should be unique words right, maybe a map of words with a count of use?)
+	user.Words = append(user.Words, lineMessageWords...)
+
+	// Increment Line Counters
+	db.Channel.LineCount++
+	user.LineCount++
+
+	// Increment Word Counters
+	user.WordCount += lineMessageWordCount
+	db.Channel.WordCount += lineMessageWordCount
+
+	// Increment Character Counters
+	user.CharCount += lineMessageCharCount
+
+	// Increment words per day
+	user.IncrementDay(lineTime.Format("2006-02-01"), lineMessageCharCount)
+
+	// Increment lines per day
+	db.Channel.IncrementDay(lineTime.Format("2006-02-01"), 1)
+
+	// Increment lines per hour
+	user.IncrementHour(uint(lineTime.Hour()))
+	db.Channel.IncrementHour(uint(lineTime.Hour()))
+
+	// Update First & Last Timestamps for User and Channel
+	user.UpdateSeen(lineTime.Unix())
+	db.Channel.UpdateSeen(lineTime.Unix())
+
+	// Store User into DB
+	db.SetUser(lineNick, user)
 }
 
 //

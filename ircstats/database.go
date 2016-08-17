@@ -26,6 +26,7 @@ type Database struct {
 //
 func (d *Database) Load(path string) (err error) {
 	d.Users = make(map[string]User)
+	d.Channel.Initiate()
 
 	fh, err := os.Open(path)
 	if err != nil {
@@ -38,7 +39,6 @@ func (d *Database) Load(path string) (err error) {
 	if err != nil {
 		return err
 	}
-
 	return
 }
 

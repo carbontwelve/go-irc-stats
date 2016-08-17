@@ -33,9 +33,8 @@ type Channel struct {
 	MaxHour   MaxHour  	// Calculated Max Hour
 	MaxWeek   MaxWeek  	// Calculated Max Week
 	Averages  Averages 	// Calculated Averages
-	First     int64    	// Unix timestamp of the first line in Channel
-	Last      int64    	// Unix timestamp of the last line in Channel
 	HoursAndDaysStats	// Inherited Hour And Days methods
+	Seen			// First & Last Seen
 }
 
 
