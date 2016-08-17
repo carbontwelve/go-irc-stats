@@ -1,4 +1,4 @@
-package ircstats
+package goircstats
 
 type User struct {
 	Username   string

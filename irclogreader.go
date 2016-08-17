@@ -1,4 +1,4 @@
-package ircstats
+package goircstats
 
 import (
 	"regexp"

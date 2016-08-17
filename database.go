@@ -1,4 +1,4 @@
-package ircstats
+package goircstats
 
 import (
 	"os"
@@ -25,7 +25,6 @@ type Database struct {
 // Load Database from disk
 //
 func (d *Database) Load(path string) (err error) {
-	d.Initiate()
 	d.Users = make(map[string]User)
 
 	fh, err := os.Open(path)

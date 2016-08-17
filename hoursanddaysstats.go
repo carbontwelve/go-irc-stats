@@ -1,4 +1,4 @@
-package ircstats
+package goircstats
 
 type HoursAndDaysStats struct {
 	Hours [24]int64        // lines per 24 hours @todo check that all 24 elements are being filled...
