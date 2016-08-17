@@ -141,6 +141,10 @@ func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	user.IncrementHour(uint(lineTime.Hour()))
 	db.Channel.IncrementHour(uint(lineTime.Hour()))
 
+	// Increment lines per week (only Channel gets its week counter incremented, we don't use this data on the User)
+	_, wk := lineTime.ISOWeek()
+	db.Channel.IncrementWeek(wk, 1)
+
 	// Update First & Last Timestamps for User and Channel
 	user.UpdateSeen(lineTime.Unix())
 	db.Channel.UpdateSeen(lineTime.Unix())

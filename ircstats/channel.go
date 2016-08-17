@@ -16,6 +16,7 @@ type MaxHour struct {
 }
 
 type Averages struct {
+	Hour    float64			// Average lines by Hour (24 hours)
 	Day     float64 		// Average lines by day (365 days)
 	Week    float64 		// Average lines by week (week 1 - week 52)
 	WeekDay float64 		// Average lines by week day (monday - sunday)
