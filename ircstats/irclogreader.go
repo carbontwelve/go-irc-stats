@@ -17,7 +17,8 @@ type IrcLogReader struct {
 	RegexMessage      *regexp.Regexp
 	RegexParseAction  *regexp.Regexp
 	RegexParseMessage *regexp.Regexp
-	linesParsed       int64
+	linesParsed       int64				// Total number of lines parsed
+	newLinesFound     int64				// Number of new lines found in log that were parsed (not to be confused with \n)
 	NickNameHashTable map[string]string		// Nickname hash table from configuration
 	Profiles          map[string]map[string]string  // Profile hash table from configuration
 	Ignore            []string			// Ignore list from configuration
@@ -33,6 +34,10 @@ func NewIrcLogReader(c Config) IrcLogReader {
 		Profiles: c.Profiles,
 		Ignore: c.Ignore,
 	}
+}
+
+func (lr IrcLogReader) NewLinesFound() int64 {
+	return lr.newLinesFound
 }
 
 func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
@@ -62,7 +67,7 @@ func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
 	return
 }
 
-func (lr IrcLogReader) parseLine(line string, isAction bool, db *Database) {
+func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	var (
 		parsed[][]string
 		user User
@@ -142,6 +147,8 @@ func (lr IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 
 	// Store User into DB
 	db.SetUser(lineNick, user)
+
+	lr.newLinesFound++;
 }
 
 //

@@ -70,6 +70,8 @@ The options are:
 		log.Fatal(dbSaveErr)
 	}
 
+	fmt.Printf("%d number of new lines parsed.", logReader.NewLinesFound())
+
 //
 	//// Get Database to calculate stats and totals
 	//lr.Database.Calculate()
