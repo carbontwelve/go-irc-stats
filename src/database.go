@@ -1,4 +1,4 @@
-package data
+package ircstats
 
 import (
 	"os"

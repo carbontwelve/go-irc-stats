@@ -28,6 +28,6 @@ EXIT /B 0
 @ECHO ON
 go build %LDFLAGS% -o ./bin/%BINARY%
 @ECHO OFF
-copy "./config.yaml" "./bin/config.yaml" > nul
-copy "./template.html" "./bin/template.html" > nul
+copy "./extra/config.yaml" "./bin/config.yaml" > nul
+copy "./extra/template.html" "./bin/template.html" > nul
 EXIT /B 0

@@ -1,4 +1,4 @@
-package data
+package ircstats
 
 type MaxWeek struct {
 	Week  string
