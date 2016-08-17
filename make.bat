@@ -12,6 +12,8 @@ if "%ARG1%" == "clean" (
     CALL :build
 ) ELSE IF "%ARG1%" == "generate-log" (
     CALL :generate-log
+) ELSE IF "%ARG1%" == "run" (
+    CALL :run
 ) ELSE IF "%ARG1%" == "clean-build" (
     CALL :clean
     CALL :build
@@ -28,14 +30,20 @@ EXIT /B 0
 
 :build
 @ECHO ON
-go build %LDFLAGS% -o ./bin/%BINARY%
+cd cmd\ircstats
+go get -t -v ./...
+go build %LDFLAGS% -o ..\..\bin\%BINARY%
 @ECHO OFF
-cd extra
-copy "config.yaml" "../bin/config.yaml" > nul
-copy "template.html" "../bin/template.html" > nul
+cd ..\..\extra
+copy "config.yaml" "..\bin\config.yaml" > nul
+copy "template.html" "..\bin\template.html" > nul
 cd ..
 EXIT /B 0
 
+:run
+bin\%BINARY% -d ./bin
+EXIT /B 0
+
 :generate-log
-php extra/createtestlog.php > ./bin/irctest.log
+php extra\createtestlog.php > .\bin\irctest.log
 EXIT /B 0
