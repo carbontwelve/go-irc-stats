@@ -1,11 +1,10 @@
 package main
 
 import (
+	"github.com/carbontwelve/go-irc-stats/ircstats"
 	"flag"
 	"os"
 	"fmt"
-	"github.com/carbontwelve/go-irc-stats/ircstats"
-	//"regexp"
 	"log"
 )
 
@@ -57,20 +56,12 @@ The options are:
 	fmt.Println("Last Parsed: ", db.LastGenerated)
 	logReader = ircstats.NewIrcLogReader(config);
 
-//
+	// Load log file and parse any new lines
+	logReaderErr := logReader.Load(config.Location, &db);
+	if (logReaderErr != nil) {
+		log.Fatal(logReaderErr)
+	}
 
-//
-	//
-//
-	//lr := LogReader{
-	//	RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
-	//	RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
-	//	RegexParseAction: regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`),
-	//	RegexParseMessage: regexp.MustCompile(`^\[(.+)\] <(\S+)> (.+)$`),
-	//	Database: db,
-	//	Config: config,
-	//}
-//
 	//// Load log file and parse any new lines
 	//lr.LoadFile()
 //
