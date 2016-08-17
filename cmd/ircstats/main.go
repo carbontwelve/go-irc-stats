@@ -4,15 +4,18 @@ import (
 	"flag"
 	"os"
 	"fmt"
+	"github.com/carbontwelve/go-irc-stats/ircstats"
 	//"regexp"
+	"log"
 )
 
 var (
 	Version string
 	Build string
+	version = flag.Bool("version", false, "Display executable version and build.")
+	configPath = flag.String("c", "config.yaml", "Path to config.yaml")
+	cwd = flag.String("d", "", "change to this directory before doing anything")
 )
-
-var version = flag.Bool("v", false, "Display executable version and build.")
 
 func main() {
 	flag.Usage = func() {
@@ -33,19 +36,29 @@ The options are:
 		os.Exit(0);
 	}
 
-
+	if *cwd != "" {
+		err := os.Chdir(*cwd)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
 
 	// Load Configuration
-	//config := Config{}
-	//configErr := config.Load("config.yaml")
-	//if (configErr != nil) {
-	//	panic(configErr)
-	//}
+	config := ircstats.Config{}
+	configErr := config.Load(*configPath)
+	if (configErr != nil) {
+		log.Fatal(configErr)
+	}
+
+	db := ircstats.Database{}
+	db.Load(config.DatabaseLocation)
+
+	fmt.Println("Last Parsed: ", db.LastGenerated)
+
 //
-	//db := Database{}
-	//db.Load(config.DatabaseLocation)
+
 //
-	//fmt.Println("Last Parsed: ", db.LastGenerated)
+	//
 //
 	//lr := LogReader{
 	//	RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
