@@ -1,10 +1,9 @@
-package goircstats
+package ircstats
 
 import (
 	"regexp"
 	"os"
 	"bufio"
-	"github.com/carbontwelve/go-irc-stats/data"
 	"fmt"
 	"time"
 )
@@ -23,7 +22,7 @@ type IrcLogReader struct {
 	Ignore            []string			// Ignore list from configuration
 }
 
-func (lr *IrcLogReader) Load(filename string, db *data.Database) (err error) {
+func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
 	// Open the input filename
 	file, err := os.Open(filename)
 	if (err != nil) {
@@ -50,11 +49,11 @@ func (lr *IrcLogReader) Load(filename string, db *data.Database) (err error) {
 	return
 }
 
-func (lr IrcLogReader) parseLine(line string, isAction bool, db *data.Database) {
+func (lr IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 
 	var (
 		parsed[][]string
-		user data.User
+		//user User
 	)
 
 	// timestamp = [0][1]

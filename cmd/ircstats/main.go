@@ -4,7 +4,6 @@ import (
 	"flag"
 	"os"
 	"fmt"
-
 	//"regexp"
 )
 
@@ -34,7 +33,7 @@ The options are:
 		os.Exit(0);
 	}
 
-	os.Exit(0);
+
 
 	// Load Configuration
 	//config := Config{}

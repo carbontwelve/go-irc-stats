@@ -1,4 +1,4 @@
-package goircstats
+package ircstats
 
 import (
 	"time"
