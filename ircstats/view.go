@@ -1,4 +1,4 @@
-package main
+package ircstats
 
 import (
 	"github.com/dustin/go-humanize"
