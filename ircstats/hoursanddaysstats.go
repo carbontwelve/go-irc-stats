@@ -1,8 +1,8 @@
 package ircstats
 
 type Seen struct {
-	FirstSeen  int64
-	LastSeen   int64
+	FirstSeen int64
+	LastSeen  int64
 }
 
 func (s *Seen) UpdateSeen(seen int64) {
@@ -21,6 +21,7 @@ func (s *Seen) UpdateSeen(seen int64) {
 }
 
 type HoursAndDaysStats struct {
+	Weeks [54]int64	       // lines per 52 weeks
 	Hours [24]int64        // lines per 24 hours @todo check that all 24 elements are being filled...
 	Days  map[string]int64 // words per day
 }
@@ -37,6 +38,11 @@ func (s *HoursAndDaysStats) IncrementDay(date string, increment int64) {
 	} else {
 		s.Days[date] = 1
 	}
+}
+
+// Increment Weeks by an input number
+func (s *HoursAndDaysStats) IncrementWeek(week int, increment int64) {
+	s.Weeks[week]+=increment
 }
 
 func (s HoursAndDaysStats) HasDay(day string) bool {
@@ -66,9 +72,23 @@ func (s HoursAndDaysStats) FindPeakHour() (hour int64, total int64) {
 	return
 }
 
+func (s HoursAndDaysStats) FindPeakWeek() (week int64, total int64) {
+	for w, t := range (s.Weeks) {
+		if (t > total) {
+			week = int64(w)
+			total = t
+		}
+	}
+	return
+}
+
 func (s *HoursAndDaysStats) Initiate() {
 	for i := 0; i < 24; i++ {
 		s.Hours[i] = 0
+	}
+
+	for i := 0; i < 54; i++ {
+		s.Weeks[i] = 0
 	}
 	s.Days = make(map[string]int64)
 }
