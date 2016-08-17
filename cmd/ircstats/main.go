@@ -5,7 +5,7 @@ import (
 	"os"
 	"fmt"
 	"github.com/carbontwelve/go-irc-stats/ircstats"
-	"regexp"
+	//"regexp"
 	"log"
 )
 
