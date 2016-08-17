@@ -6,7 +6,6 @@ import (
 	"bufio"
 	"fmt"
 	"time"
-	"github.com/carbontwelve/go-irc-stats/ircstats"
 )
 
 //
