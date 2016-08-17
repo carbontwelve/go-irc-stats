@@ -1,4 +1,4 @@
-package main
+package ircstats
 
 import (
 	"gopkg.in/yaml.v2"
