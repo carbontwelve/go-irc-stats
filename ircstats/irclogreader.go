@@ -6,6 +6,7 @@ import (
 	"bufio"
 	"fmt"
 	"time"
+	"github.com/carbontwelve/go-irc-stats/ircstats"
 )
 
 //
@@ -20,6 +21,18 @@ type IrcLogReader struct {
 	NickNameHashTable map[string]string		// Nickname hash table from configuration
 	Profiles          map[string]map[string]string  // Profile hash table from configuration
 	Ignore            []string			// Ignore list from configuration
+}
+
+func NewIrcLogReader(c Config) IrcLogReader {
+	return IrcLogReader{
+		RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
+		RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
+		RegexParseAction: regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`),
+		RegexParseMessage: regexp.MustCompile(`^\[(.+)\] <(\S+)> (.+)$`),
+		NickNameHashTable: c.NickNameHashTable,
+		Profiles: c.Profiles,
+		Ignore: c.Ignore,
+	}
 }
 
 func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
