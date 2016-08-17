@@ -5,7 +5,7 @@ import (
 	"os"
 	"fmt"
 	"github.com/carbontwelve/go-irc-stats/ircstats"
-	//"regexp"
+	"regexp"
 	"log"
 )
 
@@ -15,6 +15,7 @@ var (
 	version = flag.Bool("version", false, "Display executable version and build.")
 	configPath = flag.String("c", "config.yaml", "Path to config.yaml")
 	cwd = flag.String("d", "", "change to this directory before doing anything")
+	logReader ircstats.IrcLogReader
 )
 
 func main() {
@@ -54,6 +55,7 @@ The options are:
 	db.Load(config.DatabaseLocation)
 
 	fmt.Println("Last Parsed: ", db.LastGenerated)
+	logReader = ircstats.NewIrcLogReader(config);
 
 //
 
