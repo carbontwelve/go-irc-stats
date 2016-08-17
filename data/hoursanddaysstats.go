@@ -1,4 +1,4 @@
-package main
+package data
 
 type HoursAndDaysStats struct {
 	Hours [24]int64        // lines per 24 hours @todo check that all 24 elements are being filled...
@@ -37,7 +37,7 @@ func (s HoursAndDaysStats) FindPeakDay() (date string, total int64) {
 }
 
 func (s HoursAndDaysStats) FindPeakHour() (hour int64, total int64) {
-	for h, t := range(s.Hours) {
+	for h, t := range (s.Hours) {
 		if (t > total) {
 			hour = int64(h)
 			total = t
