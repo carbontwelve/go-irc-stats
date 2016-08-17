@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/carbontwelve/go-irc-stats"
 	"time"
 	"math"
 	"strconv"
