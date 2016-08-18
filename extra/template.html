@@ -509,55 +509,20 @@
 
     <h2>Total Activity</h2>
     <div class="activity-numbers">
-        <div><span>Messages</span> {{ .Database.Channel.LineCount | comma }}</div>
-        <div><span>Words</span> {{ .Database.Channel.WordCount | comma }}</div>
-        <div><span>Users</span> {{ .Database.Channel.UserCount | comma }}</div>
-        <div><span>Days</span> {{ .TotalDays | comma }}</div>
+        <div><span>Messages</span> ####</div>
+        <div><span>Words</span> ####</div>
+        <div><span>Users</span> ####</div>
+        <div><span>Days</span> ####</div>
     </div>
 
     <div id="charts">
         <div class="charts">
             <div class="chart">
-                <svg width="{{ .SvgGraphData.Width }}px" height="275px" version="1.1"
-                     xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink"
-                     xmlns:data="http://www.example.com/data">
-                    <g id="weeks" stroke="none" stroke-width="1" fill="#8495ab"
-                       transform="translate(0,110) scale(1,-1)">
-                        {{range $week := .SvgGraphData.Weeks }}
-                        <rect x="{{mul $week.X 10}}" y="0" width="9"
-                              height="{{$week.Height}}"
-                              data:lines="{{$week.Lines}}" data:first="{{$week.First}}"
-                              data:last="{{$week.Last}}"></rect>
-                        {{end}}
-                    </g>
-
-                    <g id="days" stroke="none" stroke-width="1" fill="none" transform="translate(0,152)">
-                        {{range $day := .SvgGraphData.Days }}
-                        <rect x="{{mul $day.X 10}}" y="{{mul $day.Y 10}}" width="9" height="9"
-                              class="{{$day.Class}}" data:date="{{$day.Date}}"
-                              data:lines="{{$day.Lines}}"></rect>
-                        {{end}}
-                    </g>
-
-                    <g class="labels" stroke="none" stroke-width="0" fill="black" transform="translate(0,111)">
-                        {{range $label := .SvgGraphData.Labels }}
-                        <line x1="{{labelX $label.X}}" y1="0" x2="{{labelX $label.X}}" y2="10"
-                              stroke="#bbb" stroke-width="1"/>
-                        <text x="{{labelX $label.X}}" y="25" text-anchor="middle">{{$label.Label}}</text>
-                        <line x1="{{labelX $label.X}}" y1="30" x2="{{labelX $label.X}}" y2="40"
-                              stroke="#bbb" stroke-width="1"/>
-                        {{end}}
-                    </g>
-                </svg>
+                ### todo add svg ###
             </div>
 
             <div class="key">
-                {{range $key, $interval := .HeatMapKey}}
-                {{if gt $key 0}}
-                <div class="scale-{{$key}}">{{$interval}}</div>
-                {{end}}
-                {{end}}
+                ### todo add scale ###
             </div>
 
             <div class="hover">
@@ -572,35 +537,7 @@
     <h2>Most Active Times</h2>
     <div id="hourly">
         <div class="chart">
-            <svg width="340px" height="170px" version="1.1"
-                 xmlns="http://www.w3.org/2000/svg"
-                 xmlns:xlink="http://www.w3.org/1999/xlink"
-                 xmlns:data="http://www.example.com/data">
-                <g id="hours" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(0,100) scale(1,-1)">
-                    {{range $bar := .SvgGraphData.MostActiveHours}}
-                    <rect x="{{$bar.X}}" y="0" width="9" height="{{$bar.Height}}"></rect>
-                    {{end}}
-                </g>
-                <g class="labels" transform="translate(0,115)">
-                    <text x="0"   y="0">A</text>
-                    <text x="40"  y="0">4</text>
-                    <text x="80"  y="0">8</text>
-                    <text x="120" y="0">P</text>
-                    <text x="160" y="0">4</text>
-                    <text x="200" y="0">8</text>
-                </g>
-
-                <g id="weekdays" stroke="none" stroke-width="1" fill="#8495ab" transform="translate(270,100) scale(1,-1)">
-                    {{range $bar := .SvgGraphData.MostActiveDays}}
-                    <rect x="{{ $bar.X }}" y="0" width="9" height="{{$bar.Height }}" data:lines="{{$bar.Value}}"></rect>
-                    {{end}}
-                </g>
-                <g class="labels" transform="translate(270,115)">
-                    <text x="10" y="0">M</text>
-                    <text x="30" y="0">W</text>
-                    <text x="50" y="0">F</text>
-                </g>
-            </svg>
+            ### todo add svg ###
         </div>
         <div class="hover">
             <div class="timezone-label">UTC</div>
@@ -609,18 +546,33 @@
     </div>
 
     <div class="activity-numbers">
-        <div><span>Average Day</span> {{.Database.Channel.Mean}}<small> lines</small></div>
-        <div><span>Average Week</span> <%= add_commas(@weeks_mean.round) %><small> lines</small></div>
-        <div><span>Most Active Day</span> {{.Database.Channel.MaxDay.Lines}}<small> lines</small></div>
-        <div><span>Most Active Week</span> {{.WeeksMax}}<small> lines</small></div>
+        <div><span>Average Day</span> ####
+            <small> lines</small>
+        </div>
+        <div><span>Average Week</span> ####
+            <small> lines</small>
+        </div>
+        <div><span>Most Active Day</span> ####
+            <small> lines</small>
+        </div>
+        <div><span>Most Active Week</span> ####
+            <small> lines</small>
+        </div>
     </div>
 
     <hr>
 
     <footer>
-        <div>A golang port by <a href="http://photogabble.co.uk">Simon Dann</a> of <a href="https://github.com/0x263b/Stats">0x263b/Stats</a></div>
+        <div>A golang port by <a href="http://photogabble.co.uk">Simon Dann</a> of <a
+                href="https://github.com/0x263b/Stats">0x263b/Stats</a></div>
     </footer>
 
 </main>
+<script id="stats_json" type="application/json">{{ .JsonData }}</script>
+<script type="application/javascript">
+    var json = document.getElementById("stats_json");
+    var myObject = JSON.parse(json.textContent);
+    console.log(myObject);
+</script>
 </body>
 </html>
