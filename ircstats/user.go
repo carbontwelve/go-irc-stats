@@ -33,10 +33,10 @@ func (u *User) CalculateTotals() {
 	// @todo finish
 }
 
-func NewUser(nick string, timestamp int64) User {
+func NewUser(nick string, timestamp int64) *User {
 	u := User{Username: nick}
 	u.Initiate()
 	u.UpdateSeen(timestamp)
-	return u
+	return &u
 }
 
