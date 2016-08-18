@@ -112,8 +112,18 @@ The options are:
 	fmt.Println("==================================================")
 
 	vd := *ircstats.NewViewData(config);
-	e, _ := vd.Export()
-	fmt.Printf("%s\n", e)
+	j, _ := vd.GetJsonString()
+	fmt.Printf("%s\n", j)
+
+	//
+	// Generate the template
+	//
+	v := *ircstats.NewView();
+	err := v.Parse("template.html", vd)
+	if (err != nil){
+		panic(err)
+	}
+
 	//
 	//// Get Database to calculate stats and totals
 	//lr.Database.Calculate()
