@@ -7,21 +7,29 @@ import "encoding/json"
 // done as a JSON export so that JavaScript within the view can transform it in any way it sees fit.
 //
 type ViewData struct {
-	PageTitle       string // Page title from configuration
-	PageDescription string // Page description from configuration
-	HeatMapInterval uint   // HeatMap Interval from configuration
+	PageTitle       string   // Page title from configuration
+	PageDescription string   // Page description from configuration
+	JsonData        JsonData // Json data for exporting to page
+}
+
+type JsonData struct {
+	HeatMapInterval uint // HeatMap Interval from configuration
 }
 
 func NewViewData(c Config) *ViewData {
+
+	j := JsonData{
+		HeatMapInterval: c.HeatMapInterval,
+	}
+
 	return &ViewData{
 		PageTitle: c.PageTitle,
 		PageDescription: c.PageDescription,
-		HeatMapInterval: c.HeatMapInterval,
+		JsonData: j,
 	}
 }
 
-func (d ViewData) Export() (b []byte, err error) {
-	b, err = json.Marshal(d);
+func (vd ViewData) GetJsonString() (j []byte, err error) {
+	j, err = json.Marshal(vd.JsonData)
 	return
 }
-
