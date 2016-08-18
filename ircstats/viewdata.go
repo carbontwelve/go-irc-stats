@@ -9,10 +9,18 @@ import "encoding/json"
 type ViewData struct {
 	PageTitle       string // Page title from configuration
 	PageDescription string // Page description from configuration
-	HeatMapInterval int64  // HeatMap Interval from configuration
+	HeatMapInterval uint   // HeatMap Interval from configuration
 }
 
-func (d ViewData) export() (b []byte, err error) {
+func NewViewData(c Config) *ViewData {
+	return &ViewData{
+		PageTitle: c.PageTitle,
+		PageDescription: c.PageDescription,
+		HeatMapInterval: c.HeatMapInterval,
+	}
+}
+
+func (d ViewData) Export() (b []byte, err error) {
 	b, err = json.Marshal(d);
 	return
 }
