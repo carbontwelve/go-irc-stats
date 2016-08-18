@@ -67,7 +67,7 @@ The options are:
 	db.Load(config.DatabaseLocation)
 
 	fmt.Println("Last Parsed: ", db.LastGenerated)
-	logReader = ircstats.NewIrcLogReader(config);
+	logReader = *ircstats.NewIrcLogReader(config);
 
 	// Load log file and parse any new lines
 	logReaderErr := logReader.Load(config.Location, &db);
@@ -86,16 +86,16 @@ The options are:
 
 	// Lol "stats"
 	fmt.Printf("%d number of new lines parsed.\n\n", logReader.NewLinesFound())
-	fmt.Println("= [ Dates ] ============================")
+	fmt.Println("= [ Dates ] ======================================")
 	fmt.Printf("First line date\t\t\t\t\t%d\n", db.Channel.FirstSeen)
 	fmt.Printf("Last line date\t\t\t\t\t%d\n", db.Channel.LastSeen)
 	fmt.Printf("Total Days Seen:\t\t\t\t%d\n", db.Channel.TotalDaysSeen())
-	fmt.Println("= [ Averages ] =========================")
+	fmt.Println("= [ Averages ] ===================================")
 	fmt.Printf("Mean Lines/Hr:\t\t\t\t\t%f\n", db.Channel.Averages.Hour)
 	fmt.Printf("Mean Lines/Day:\t\t\t\t\t%f\n", db.Channel.Averages.Day)
 	fmt.Printf("Mean Lines/Week:\t\t\t\t%f\n", db.Channel.Averages.Week)
 	fmt.Printf("Mean Lines/Week Day:\t\t\t%f\n", db.Channel.Averages.WeekDay)
-	fmt.Println("= [ Counters ] =========================")
+	fmt.Println("= [ Counters ] ===================================")
 	fmt.Printf("Total Lines Parsed:\t\t\t\t%d\n", db.Channel.LineCount)
 	fmt.Printf("Total Unique Users:\t\t\t\t%d\n", db.Channel.UserCount)
 	fmt.Printf("Users Active in past 30 days:\t%d\n", len(db.Channel.ActiveUsers))
@@ -109,8 +109,11 @@ The options are:
 	fmt.Printf("Peak Week:\t\t\t\t\t\t%d\n", db.Channel.MaxWeek.Week)
 	fmt.Printf("Peak Week Lines:\t\t\t\t%d\n", db.Channel.MaxWeek.Lines)
 
-	fmt.Println("========================================")
+	fmt.Println("==================================================")
 
+	vd := *ircstats.NewViewData(config);
+	e, _ := vd.Export()
+	fmt.Printf("%s\n", e)
 	//
 	//// Get Database to calculate stats and totals
 	//lr.Database.Calculate()
