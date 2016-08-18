@@ -24,8 +24,8 @@ type IrcLogReader struct {
 	Ignore            []string			// Ignore list from configuration
 }
 
-func NewIrcLogReader(c Config) IrcLogReader {
-	return IrcLogReader{
+func NewIrcLogReader(c Config) *IrcLogReader {
+	return &IrcLogReader{
 		RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
 		RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
 		RegexParseAction: regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`),
@@ -110,7 +110,7 @@ func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	if db.HasUser(lineNick) == true {
 		user, _ = db.GetUser(lineNick)
 	} else {
-		user = NewUser(lineNick, lineTime.Unix())
+		user = *NewUser(lineNick, lineTime.Unix())
 	}
 
 	lineMessageCharCount := int64(strings.Count(lineMessage, "") - 1)
