@@ -1,5 +1,6 @@
 # Go IRC Stats
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/carbontwelve/go-irc-stats)](https://goreportcard.com/report/github.com/carbontwelve/go-irc-stats)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
 [![ghit.me](https://ghit.me/badge.svg?repo=carbontwelve/go-irc-stats)](https://ghit.me/repo/carbontwelve/go-irc-stats)
 
