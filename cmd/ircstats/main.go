@@ -80,7 +80,7 @@ The options are:
 	}
 
 	vd := *ircstats.NewViewData(config)
-	vd.Calculate(db);
+	vd.Calculate(db)
 	vd.JsonData.Debug()
 
 	j, _ := vd.GetJsonString()

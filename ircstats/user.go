@@ -5,17 +5,17 @@ type User struct {
 	Url        string
 	Avatar     string
 	LineCount  int64
-	WordCount  int64            // *
-	DaysActive int64            // *
-	CharCount  int64            // *
-				    //WordsLine  int64
+	WordCount  int64 // *
+	DaysActive int64 // *
+	CharCount  int64 // *
+	//WordsLine  int64
 	LineLength int64
 	LinesDay   int64
 	WordsDay   int64
 	Vocabulary int64
-				    //DaysTotal  int64
-				    //MaxHours   int64
-	Words      map[string]int64 // A Map of words and usage
+	//DaysTotal  int64
+	//MaxHours   int64
+	Words map[string]int64 // A Map of words and usage
 	HoursAndDaysStats
 	Seen
 }
@@ -25,7 +25,7 @@ func (u *User) AddWord(word string) {
 	if u.HasWord(word) == true {
 		u.Words[word]++
 	} else {
-		u.Words[word] = 1;
+		u.Words[word] = 1
 	}
 }
 

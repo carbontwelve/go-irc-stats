@@ -118,7 +118,7 @@ func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	lineMessageWordCount := int64(len(lineMessageWords))
 
 	// Append to user words array
-	for _, word := range(lineMessageWords) {
+	for _, word := range lineMessageWords {
 		user.AddWord(word)
 	}
 

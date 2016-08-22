@@ -30,37 +30,37 @@ type UserData struct {
 }
 
 type JsonData struct {
-					     // Configurable options
-	HeatMapInterval  uint                // HeatMap Interval from configuration
-	ActivityPeriod   uint                // Activity Period from configuration
+	// Configurable options
+	HeatMapInterval uint // HeatMap Interval from configuration
+	ActivityPeriod  uint // Activity Period from configuration
 
-					     // Dates
-	FirstSeen        int64               // Timestamp of first message
-	LastSeen         int64               // Timestamp of last message
-	TotalDaysSeen    int64               // Number of days between FirstSeen and LastSeen
+	// Dates
+	FirstSeen     int64 // Timestamp of first message
+	LastSeen      int64 // Timestamp of last message
+	TotalDaysSeen int64 // Number of days between FirstSeen and LastSeen
 
-					     // Averages
-	Averages         Averages            // Calculated Averages
+	// Averages
+	Averages Averages // Calculated Averages
 
-					     // Counters
-	MaxDay           MaxDay              // Calculated Max Day
-	MaxHour          MaxHour             // Calculated Max Hour
-	MaxWeek          MaxWeek             // Calculated Max Week
-	TotalLines       int64               // Lines parsed in total
-	TotalWords       int64               // Total Words (all words multiplied by times used)
-	TotalUsers       int64               // Number of unique users
-	TotalActiveUsers int64               // Number of active users within activity period (default 30 days)
+	// Counters
+	MaxDay           MaxDay  // Calculated Max Day
+	MaxHour          MaxHour // Calculated Max Hour
+	MaxWeek          MaxWeek // Calculated Max Week
+	TotalLines       int64   // Lines parsed in total
+	TotalWords       int64   // Total Words (all words multiplied by times used)
+	TotalUsers       int64   // Number of unique users
+	TotalActiveUsers int64   // Number of active users within activity period (default 30 days)
 
-					     // Misc
-	Users            map[string]UserData // Users
-	ActiveUsers      map[string]int64
+	// Misc
+	Users       map[string]UserData // Users
+	ActiveUsers map[string]int64
 }
 
 func NewViewData(c Config) *ViewData {
 
 	j := JsonData{
 		HeatMapInterval: c.HeatMapInterval,
-		ActivityPeriod: c.ActivityPeriod,
+		ActivityPeriod:  c.ActivityPeriod,
 	}
 
 	return &ViewData{
@@ -107,8 +107,8 @@ func (vd *ViewData) Calculate(db Database) {
 	vd.JsonData.TotalDaysSeen = db.Channel.TotalDaysSeen()
 
 	// Calculate Counters
-	vd.JsonData.TotalUsers = db.CountUsers();
-	vd.JsonData.MaxDay.Day, vd.JsonData.MaxDay.Lines = db.Channel.FindPeakDay();
+	vd.JsonData.TotalUsers = db.CountUsers()
+	vd.JsonData.MaxDay.Day, vd.JsonData.MaxDay.Lines = db.Channel.FindPeakDay()
 	vd.JsonData.MaxHour.Hour, vd.JsonData.MaxHour.Lines = db.Channel.FindPeakHour()
 	vd.JsonData.MaxWeek.Week, vd.JsonData.MaxWeek.Lines = db.Channel.FindPeakWeek()
 	vd.JsonData.TotalLines = db.Channel.LineCount
@@ -126,9 +126,9 @@ func (vd *ViewData) Calculate(db Database) {
 func (vd *ViewData) calculateUsers(db Database) {
 	var (
 		timePeriod map[string]bool
-		users map[string]UserData
+		users      map[string]UserData
 
-		userWordCount int64
+		userWordCount  int64
 		userDaysActive int64
 	)
 
@@ -140,9 +140,9 @@ func (vd *ViewData) calculateUsers(db Database) {
 		timePeriod[time.Now().AddDate(0, 0, -i).Format("2006-02-01")] = true
 	}
 
-	for nick, u := range (db.Users) {
-		userWordCount = 0;
-		userDaysActive = 0;
+	for nick, u := range db.Users {
+		userWordCount = 0
+		userDaysActive = 0
 
 		for timePeriodDate := range timePeriod {
 			if _, ok := u.Days[timePeriodDate]; ok {
@@ -152,12 +152,12 @@ func (vd *ViewData) calculateUsers(db Database) {
 		}
 
 		viewUserData := UserData{
-			Username : u.Username,
-			Url : u.Url,
-			Avatar: u.Avatar,
-			TotalWords: u.WordCount,
-			Vocabulary: int64(len(u.Words)),
-			Words: u.Words,
+			Username:           u.Username,
+			Url:                u.Url,
+			Avatar:             u.Avatar,
+			TotalWords:         u.WordCount,
+			Vocabulary:         int64(len(u.Words)),
+			Words:              u.Words,
 			DaysActiveInPeriod: userDaysActive,
 			TotalWordsInPeriod: userWordCount,
 		}
@@ -166,7 +166,7 @@ func (vd *ViewData) calculateUsers(db Database) {
 		viewUserData.Averages.Week = u.FindWeekAverage()
 		viewUserData.Averages.Day = u.FindDayAverage()
 
-		if (userDaysActive > 0) {
+		if userDaysActive > 0 {
 			viewUserData.WordsByDayInPeriod = float64(userWordCount) / float64(userDaysActive)
 			vd.JsonData.ActiveUsers[nick] = userDaysActive
 		}

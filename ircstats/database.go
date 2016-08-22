@@ -110,7 +110,7 @@ func (d Database) GetUser(nick string) (user User, err error) {
 
 // Return count of Users in data store
 func (d Database) CountUsers() int64 {
-	return int64(len(d.Users));
+	return int64(len(d.Users))
 }
 
 //
