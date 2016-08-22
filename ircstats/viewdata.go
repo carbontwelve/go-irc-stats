@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"time"
+	"sort"
 )
 
 //
@@ -29,38 +30,67 @@ type UserData struct {
 	DaysActiveInPeriod int64
 	TotalWordsInPeriod int64
 	WordsByDayInPeriod float64
-	ActivityPercentage float64 // Overall % contribution to Channel.WordCount
+	ActivityPercentage float64          // Overall % contribution to Channel.WordCount
 }
 
 type JsonData struct {
-	// Configurable options
-	HeatMapInterval uint // HeatMap Interval from configuration
-	ActivityPeriod  uint // Activity Period from configuration
+					      // Configurable options
+	HeatMapInterval   uint                // HeatMap Interval from configuration
+	ActivityPeriod    uint                // Activity Period from configuration
 
-	// Dates
-	FirstSeen     int64 // Timestamp of first message
-	LastSeen      int64 // Timestamp of last message
-	TotalDaysSeen int64 // Number of days between FirstSeen and LastSeen
+					      // Dates
+	FirstSeen         int64               // Timestamp of first message
+	LastSeen          int64               // Timestamp of last message
+	TotalDaysSeen     int64               // Number of days between FirstSeen and LastSeen
 
-	// Averages
-	Averages Averages // Calculated Averages
+					      // Averages
+	Averages          Averages            // Calculated Averages
 
-	// Counters
-	MaxDay           MaxDay  // Calculated Max Day
-	MaxHour          MaxHour // Calculated Max Hour
-	MaxWeek          MaxWeek // Calculated Max Week
-	TotalLines       int64   // Lines parsed in total
-	TotalWords       int64   // Total Words (all words multiplied by times used)
-	TotalUsers       int64   // Number of unique users
-	TotalActiveUsers int64   // Number of active users within activity period (default 30 days)
+					      // Counters
+	MaxDay            MaxDay              // Calculated Max Day
+	MaxHour           MaxHour             // Calculated Max Hour
+	MaxWeek           MaxWeek             // Calculated Max Week
+	TotalLines        int64               // Lines parsed in total
+	TotalWords        int64               // Total Words (all words multiplied by times used)
+	TotalUsers        int64               // Number of unique users
+	TotalActiveUsers  int64               // Number of active users within activity period (default 30 days)
 
-	// Misc
-	Users       map[string]UserData // Users
-	ActiveUsers map[string]int64
+					      // Misc
+	Users             map[string]UserData // Users
+	SortedActiveUsers []string
+}
+
+type sortedMap struct {
+	m map[string]int
+	s []string
+}
+
+func (sm *sortedMap) Len() int {
+	return len(sm.m)
+}
+
+func (sm *sortedMap) Less(i, j int) bool {
+	return sm.m[sm.s[i]] > sm.m[sm.s[j]]
+}
+
+func (sm *sortedMap) Swap(i, j int) {
+	sm.s[i], sm.s[j] = sm.s[j], sm.s[i]
+}
+
+func sortedKeys(m map[string]int) []string {
+	sm := new(sortedMap)
+	sm.m = m
+	sm.s = make([]string, len(m))
+	i := 0
+	for key, _ := range m {
+		sm.s[i] = key
+		i++
+	}
+	sort.Sort(sm)
+	return sm.s
 }
 
 func NewViewData(c Config) *ViewData {
-
 	j := JsonData{
 		HeatMapInterval: c.HeatMapInterval,
 		ActivityPeriod:  c.ActivityPeriod,
@@ -124,19 +154,21 @@ func (vd *ViewData) Calculate(db Database) {
 
 	// Calculate Users
 	vd.calculateUsers(db)
+
 }
 
 func (vd *ViewData) calculateUsers(db Database) {
 	var (
 		timePeriod map[string]bool
 		users      map[string]UserData
+		activeUsers map[string]int
 
-		userWordCount  int64
+		userWordCount int64
 		userDaysActive int64
 	)
 
 	timePeriod = make(map[string]bool)
-	vd.JsonData.ActiveUsers = make(map[string]int64)
+	activeUsers = make(map[string]int)
 	users = make(map[string]UserData)
 
 	for i := 1; i < int(vd.JsonData.ActivityPeriod); i++ {
@@ -174,12 +206,13 @@ func (vd *ViewData) calculateUsers(db Database) {
 
 		if userDaysActive > 0 {
 			viewUserData.WordsByDayInPeriod = float64(userWordCount) / float64(userDaysActive)
-			vd.JsonData.ActiveUsers[nick] = userDaysActive
+			activeUsers[nick] = int(userDaysActive)
 		}
 		users[nick] = viewUserData
 	}
 
 	vd.JsonData.Users = users
+	vd.JsonData.SortedActiveUsers = sortedKeys(activeUsers);
 }
 
 func (vd ViewData) GetJsonString() (j []byte, err error) {
