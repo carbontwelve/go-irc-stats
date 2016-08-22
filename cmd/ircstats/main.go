@@ -6,8 +6,6 @@ import (
 	"github.com/carbontwelve/go-irc-stats/ircstats"
 	"log"
 	"os"
-	"strconv"
-	"time"
 )
 
 var (
