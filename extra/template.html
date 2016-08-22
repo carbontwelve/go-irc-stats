@@ -509,10 +509,10 @@
 
     <h2>Total Activity</h2>
     <div class="activity-numbers">
-        <div><span>Messages</span> ####</div>
-        <div><span>Words</span> ####</div>
-        <div><span>Users</span> ####</div>
-        <div><span>Days</span> ####</div>
+        <div><span>Messages</span>{{ .JsonData.TotalLines | comma }}</div>
+        <div><span>Words</span> {{ .JsonData.TotalWords | comma }}</div>
+        <div><span>Users</span> {{ .JsonData.TotalUsers | comma }}</div>
+        <div><span>Days</span> {{ .JsonData.TotalDaysSeen | comma }}</div>
     </div>
 
     <div id="charts">
@@ -546,16 +546,16 @@
     </div>
 
     <div class="activity-numbers">
-        <div><span>Average Day</span> ####
+        <div><span>Average Day</span> {{ .JsonData.Averages.Day | round | floattoint64 | comma }}
             <small> lines</small>
         </div>
-        <div><span>Average Week</span> ####
+        <div><span>Average Week</span> {{ .JsonData.Averages.Week | round | floattoint64 | comma }}
             <small> lines</small>
         </div>
-        <div><span>Most Active Day</span> ####
+        <div><span>Most Active Day</span> {{ .JsonData.MaxDay.Lines | comma }}
             <small> lines</small>
         </div>
-        <div><span>Most Active Week</span> ####
+        <div><span>Most Active Week</span> {{ .JsonData.MaxWeek.Lines | comma }}
             <small> lines</small>
         </div>
     </div>
