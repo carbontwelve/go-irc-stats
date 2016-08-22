@@ -140,9 +140,10 @@ func calculate(db *ircstats.Database, config ircstats.Config) {
 	// Calculate Active Users
 	calculateActiveUsers(db)
 
-	calculateHeatMapDays(db, config.HeatMapInterval)
+	//calculateHeatMapDays(db, config.HeatMapInterval)
 }
 
+// Calculate active users within past 30 days
 func calculateActiveUsers(db *ircstats.Database) {
 	timePeriod := make(map[string]bool)
 	db.Channel.ActiveUsers = make(map[string]ircstats.User)
@@ -191,6 +192,7 @@ type DayValue struct {
 	Value int64
 }
 
+// @todo move this functionality to javascript
 func calculateHeatMapDays(db *ircstats.Database, heatMapInterval uint) {
 
 	var (
