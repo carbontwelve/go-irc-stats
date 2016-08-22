@@ -123,32 +123,6 @@ The options are:
 	if err != nil {
 		panic(err)
 	}
-
-	//
-	//// Get Database to calculate stats and totals
-	//lr.Database.Calculate()
-	//
-
-	//
-	//// Once we are finished dump to disk cache file
-	//lr.Database.Save(config.DatabaseLocation)
-	//
-	//vd := ViewData{
-	//	PageTitle : config.PageTitle,
-	//	PageDescription : config.PageDescription,
-	//	HeatMapInterval: config.HeatMapInterval,
-	//	Database : lr.Database,
-	//}
-	//
-	//vd.buildDayHeatMapDays()
-	//vd.buildWeekGraph()
-	//
-	//v := View{}
-	//err := v.Parse("template.html", vd)
-	//
-	//if (err != nil){
-	//	panic(err)
-	//}
 }
 
 func calculate(db *ircstats.Database, config ircstats.Config) {
