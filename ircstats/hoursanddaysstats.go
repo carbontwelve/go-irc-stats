@@ -104,7 +104,6 @@ func (s HoursAndDaysStats) FindHourAverage() (avg float64) {
 	}
 
 	return
-	return
 }
 
 func (s HoursAndDaysStats) FindDayAverage() (avg float64) {
