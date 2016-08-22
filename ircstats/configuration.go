@@ -15,6 +15,7 @@ type Config struct {
 	PageTitle         string
 	PageDescription   string
 	HeatMapInterval   uint
+	ActivityPeriod    uint
 	Ignore            []string
 	NickNameMapping   map[string][]string
 	NickNameHashTable map[string]string
