@@ -108,6 +108,11 @@ func (d Database) GetUser(nick string) (user User, err error) {
 	return
 }
 
+// Return count of Users in data store
+func (d Database) CountUsers() int64 {
+	return int64(len(d.Users));
+}
+
 //
 // At some point this needs to check the version
 // @todo implement this
