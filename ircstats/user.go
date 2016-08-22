@@ -5,32 +5,19 @@ type User struct {
 	Url        string
 	Avatar     string
 	LineCount  int64
-	WordCount  int64
-	DaysActive int64
-	CharCount  int64
-	WordsLine  int64
+	WordCount  int64            // *
+	DaysActive int64            // *
+	CharCount  int64            // *
+				    //WordsLine  int64
 	LineLength int64
 	LinesDay   int64
 	WordsDay   int64
 	Vocabulary int64
-	DaysTotal  int64
-	MaxHours   int64
-	Words      map[string]int64	// A Map of words and usage
+				    //DaysTotal  int64
+				    //MaxHours   int64
+	Words      map[string]int64 // A Map of words and usage
 	HoursAndDaysStats
 	Seen
-}
-
-func (u *User) CalculateTotals() {
-	u.Vocabulary = int64(len(u.Words))
-	u.DaysTotal = int64(len(u.Days))
-
-	if u.LineCount > 0 {
-		u.WordsLine = int64(u.WordCount / u.LineCount)
-	} else {
-		u.WordsLine = 0
-	}
-
-	// @todo finish
 }
 
 // Add Word to Words map, or if it already exists incremenet its usage count
