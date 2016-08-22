@@ -20,6 +20,8 @@ type UserData struct {
 	Username           string
 	Url                string
 	Avatar             string
+	FirstSpoke         int64
+	LastSpoke          int64
 	TotalWords         int64            // Count of words
 	Averages           Averages         // Used for words/day
 	Vocabulary         int64            // Number of different words used
@@ -27,6 +29,7 @@ type UserData struct {
 	DaysActiveInPeriod int64
 	TotalWordsInPeriod int64
 	WordsByDayInPeriod float64
+	ActivityPercentage float64 // Overall % contribution to Channel.WordCount
 }
 
 type JsonData struct {
@@ -155,11 +158,14 @@ func (vd *ViewData) calculateUsers(db Database) {
 			Username:           u.Username,
 			Url:                u.Url,
 			Avatar:             u.Avatar,
+			FirstSpoke:         u.FirstSeen,
+			LastSpoke:          u.LastSeen,
 			TotalWords:         u.WordCount,
 			Vocabulary:         int64(len(u.Words)),
 			Words:              u.Words,
 			DaysActiveInPeriod: userDaysActive,
 			TotalWordsInPeriod: userWordCount,
+			ActivityPercentage: (float64(u.WordCount) / float64(db.Channel.WordCount)) * 100,
 		}
 
 		viewUserData.Averages.Hour = u.FindHourAverage()
