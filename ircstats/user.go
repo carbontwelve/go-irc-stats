@@ -15,7 +15,7 @@ type User struct {
 	Vocabulary int64
 	DaysTotal  int64
 	MaxHours   int64
-	Words      []string
+	Words      map[string]int64
 	HoursAndDaysStats
 	Seen
 }
@@ -33,9 +33,26 @@ func (u *User) CalculateTotals() {
 	// @todo finish
 }
 
+func (u *User) AddWord(word string) {
+	if u.HasWord(word) == true {
+		u.Words[word]++
+	} else {
+		u.Words[word] = 1;
+	}
+}
+
+// Check to see if User contains word
+func (u User) HasWord(word string) bool {
+	if _, ok := u.Words[word]; ok {
+		return true
+	}
+	return false
+}
+
 func NewUser(nick string, timestamp int64) *User {
 	u := User{Username: nick}
 	u.Initiate()
+	u.Words = make(map[string]int64)
 	u.UpdateSeen(timestamp)
 	return &u
 }

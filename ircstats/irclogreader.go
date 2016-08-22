@@ -117,8 +117,10 @@ func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	lineMessageWords := strings.Split(strings.ToLower(lineMessage), " ")
 	lineMessageWordCount := int64(len(lineMessageWords))
 
-	// Append to user words array (@todo this should be unique words right, maybe a map of words with a count of use?)
-	user.Words = append(user.Words, lineMessageWords...)
+	// Append to user words array
+	for _, word := range(lineMessageWords) {
+		user.AddWord(word)
+	}
 
 	// Increment Line Counters
 	db.Channel.LineCount++
