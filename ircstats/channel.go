@@ -38,3 +38,13 @@ type Channel struct {
 	HoursAndDaysStats                 // Inherited Hour And Days methods
 	Seen                              // First & Last Seen
 }
+
+// @todo add function for calculating max day
+
+// @todo add function for calculating max hour
+
+// @todo add function for calculating max week
+
+// @todo add function for calculating averages
+
+// @todo add function for calculating active users

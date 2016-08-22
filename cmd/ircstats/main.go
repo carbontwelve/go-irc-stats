@@ -112,6 +112,7 @@ The options are:
 	fmt.Println("==================================================")
 
 	vd := *ircstats.NewViewData(config)
+	vd.JsonData.Channel = db.Channel;
 	j, _ := vd.GetJsonString()
 	fmt.Printf("%s\n", j)
 

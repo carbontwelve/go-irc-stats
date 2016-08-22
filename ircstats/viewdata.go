@@ -14,6 +14,7 @@ type ViewData struct {
 
 type JsonData struct {
 	HeatMapInterval uint // HeatMap Interval from configuration
+	Channel Channel
 }
 
 func NewViewData(c Config) *ViewData {
