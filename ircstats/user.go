@@ -24,7 +24,7 @@ func (u *User) CalculateTotals() {
 	u.Vocabulary = int64(len(u.Words))
 	u.DaysTotal = int64(len(u.Days))
 
-	if (u.LineCount > 0) {
+	if u.LineCount > 0 {
 		u.WordsLine = int64(u.WordCount / u.LineCount)
 	} else {
 		u.WordsLine = 0
@@ -39,4 +39,3 @@ func NewUser(nick string, timestamp int64) *User {
 	u.UpdateSeen(timestamp)
 	return &u
 }
-

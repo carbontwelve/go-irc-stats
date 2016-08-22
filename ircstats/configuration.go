@@ -1,27 +1,27 @@
 package ircstats
 
 import (
-	"gopkg.in/yaml.v2"
-	"path/filepath"
-	"io/ioutil"
 	"errors"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
+	"path/filepath"
 )
 
 type Config struct {
-	Location string
-	SaveLocation string
-	DatabaseLocation string
-	PageTitle string
-	PageDescription string
-	HeatMapInterval uint
-	Ignore []string
-	NickNameMapping map[string][]string
+	Location          string
+	SaveLocation      string
+	DatabaseLocation  string
+	PageTitle         string
+	PageDescription   string
+	HeatMapInterval   uint
+	Ignore            []string
+	NickNameMapping   map[string][]string
 	NickNameHashTable map[string]string
-	Profiles map[string]map[string]string
+	Profiles          map[string]map[string]string
 }
 
-func (c *Config) Load (path string) (err error) {
+func (c *Config) Load(path string) (err error) {
 	yamlFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
@@ -39,7 +39,7 @@ func (c *Config) Load (path string) (err error) {
 	c.Location, _ = filepath.Abs(c.Location)
 
 	if _, err := os.Stat(c.Location); os.IsNotExist(err) {
-		return errors.New("The path ["+ c.Location +"] could not be read, does it exist?")
+		return errors.New("The path [" + c.Location + "] could not be read, does it exist?")
 	}
 
 	if c.SaveLocation == "" {
@@ -49,7 +49,7 @@ func (c *Config) Load (path string) (err error) {
 	c.SaveLocation, _ = filepath.Abs(c.SaveLocation)
 
 	if _, err := os.Stat(c.SaveLocation); os.IsNotExist(err) {
-		return errors.New("The path ["+ c.SaveLocation +"] could not be read, does it exist?")
+		return errors.New("The path [" + c.SaveLocation + "] could not be read, does it exist?")
 	}
 
 	if c.DatabaseLocation == "" {
@@ -64,8 +64,8 @@ func (c *Config) Load (path string) (err error) {
 
 	// Create a hash table for username corrections
 	c.NickNameHashTable = make(map[string]string)
-	for u, mappings := range (c.NickNameMapping) {
-		for _, mappedNick := range(mappings) {
+	for u, mappings := range c.NickNameMapping {
+		for _, mappedNick := range mappings {
 			c.NickNameHashTable[mappedNick] = u
 		}
 	}

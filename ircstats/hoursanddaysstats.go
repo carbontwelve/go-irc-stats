@@ -6,16 +6,16 @@ type Seen struct {
 }
 
 func (s *Seen) UpdateSeen(seen int64) {
-	if (s.FirstSeen == 0) {
+	if s.FirstSeen == 0 {
 		s.FirstSeen = seen
 	}
-	if (s.LastSeen == 0) {
+	if s.LastSeen == 0 {
 		s.LastSeen = seen
 	}
-	if (s.FirstSeen > seen) {
+	if s.FirstSeen > seen {
 		s.FirstSeen = seen
 	}
-	if (s.LastSeen < seen) {
+	if s.LastSeen < seen {
 		s.LastSeen = seen
 	}
 }
@@ -25,7 +25,7 @@ func (s Seen) TotalDaysSeen() int64 {
 }
 
 type HoursAndDaysStats struct {
-	Weeks [54]int64	       // lines per 52 weeks
+	Weeks [54]int64        // lines per 52 weeks
 	Hours [24]int64        // lines per 24 hours @todo check that all 24 elements are being filled...
 	Days  map[string]int64 // words per day
 }
@@ -46,7 +46,7 @@ func (s *HoursAndDaysStats) IncrementDay(date string, increment int64) {
 
 // Increment Weeks by an input number
 func (s *HoursAndDaysStats) IncrementWeek(week int, increment int64) {
-	s.Weeks[week]+=increment
+	s.Weeks[week] += increment
 }
 
 func (s HoursAndDaysStats) HasDay(day string) bool {
@@ -57,8 +57,8 @@ func (s HoursAndDaysStats) HasDay(day string) bool {
 }
 
 func (s HoursAndDaysStats) FindPeakDay() (date string, total int64) {
-	for d, t := range (s.Days) {
-		if (t > total) {
+	for d, t := range s.Days {
+		if t > total {
 			date = d
 			total = t
 		}
@@ -67,8 +67,8 @@ func (s HoursAndDaysStats) FindPeakDay() (date string, total int64) {
 }
 
 func (s HoursAndDaysStats) FindPeakHour() (hour int64, total int64) {
-	for h, t := range (s.Hours) {
-		if (t > total) {
+	for h, t := range s.Hours {
+		if t > total {
 			hour = int64(h)
 			total = t
 		}
@@ -77,8 +77,8 @@ func (s HoursAndDaysStats) FindPeakHour() (hour int64, total int64) {
 }
 
 func (s HoursAndDaysStats) FindPeakWeek() (week int64, total int64) {
-	for w, t := range (s.Weeks) {
-		if (t > total) {
+	for w, t := range s.Weeks {
+		if t > total {
 			week = int64(w)
 			total = t
 		}
@@ -88,19 +88,19 @@ func (s HoursAndDaysStats) FindPeakWeek() (week int64, total int64) {
 
 func (s HoursAndDaysStats) FindHourAverage() (avg float64) {
 	var (
-		sum int64
+		sum  int64
 		size int64
 	)
 
 	avg = 0.0
 
-	for _, t := range (s.Hours) {
-		sum+=t
+	for _, t := range s.Hours {
+		sum += t
 		size++
 	}
 
 	if size > 0 {
-		avg = float64(sum) / float64(size);
+		avg = float64(sum) / float64(size)
 	}
 
 	return
@@ -109,19 +109,19 @@ func (s HoursAndDaysStats) FindHourAverage() (avg float64) {
 
 func (s HoursAndDaysStats) FindDayAverage() (avg float64) {
 	var (
-		sum int64
+		sum  int64
 		size int64
 	)
 
 	avg = 0.0
 
-	for _, t := range (s.Days) {
-		sum+=t
+	for _, t := range s.Days {
+		sum += t
 		size++
 	}
 
 	if size > 0 {
-		avg = float64(sum) / float64(size);
+		avg = float64(sum) / float64(size)
 	}
 
 	return
@@ -129,19 +129,19 @@ func (s HoursAndDaysStats) FindDayAverage() (avg float64) {
 
 func (s HoursAndDaysStats) FindWeekAverage() (avg float64) {
 	var (
-		sum int64
+		sum  int64
 		size int64
 	)
 
 	avg = 0.0
 
-	for _, t := range (s.Weeks) {
-		sum+=t
+	for _, t := range s.Weeks {
+		sum += t
 		size++
 	}
 
 	if size > 0 {
-		avg = float64(sum) / float64(size);
+		avg = float64(sum) / float64(size)
 	}
 	return
 }

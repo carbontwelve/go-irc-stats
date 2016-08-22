@@ -1,11 +1,11 @@
 package ircstats
 
 import (
-	"os"
-	"encoding/gob"
 	"bytes"
-	"fmt"
+	"encoding/gob"
 	"errors"
+	"fmt"
+	"os"
 )
 
 //
@@ -54,7 +54,7 @@ func (d Database) Save(path string) (err error) {
 		return err
 	}
 
-	fh, eopen := os.OpenFile(path, os.O_CREATE | os.O_WRONLY, 0666)
+	fh, eopen := os.OpenFile(path, os.O_CREATE|os.O_WRONLY, 0666)
 	defer fh.Close()
 
 	if eopen != nil {
@@ -114,7 +114,7 @@ func (d Database) GetUser(nick string) (user User, err error) {
 //
 func (d Database) CheckVersion(version string) (ok bool, err error) {
 	ok = (d.Version != version)
-	if (ok == false) {
+	if ok == false {
 		err = errors.New("This version of go-irc-stats is incompatible with the current cached datastore.")
 	}
 	return

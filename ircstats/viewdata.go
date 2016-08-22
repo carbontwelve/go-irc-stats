@@ -23,9 +23,9 @@ func NewViewData(c Config) *ViewData {
 	}
 
 	return &ViewData{
-		PageTitle: c.PageTitle,
+		PageTitle:       c.PageTitle,
 		PageDescription: c.PageDescription,
-		JsonData: j,
+		JsonData:        j,
 	}
 }
 

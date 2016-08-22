@@ -1,12 +1,12 @@
 package ircstats
 
 import (
-	"regexp"
-	"os"
 	"bufio"
 	"fmt"
-	"time"
+	"os"
+	"regexp"
 	"strings"
+	"time"
 )
 
 //
@@ -17,22 +17,22 @@ type IrcLogReader struct {
 	RegexMessage      *regexp.Regexp
 	RegexParseAction  *regexp.Regexp
 	RegexParseMessage *regexp.Regexp
-	linesParsed       int64				// Total number of lines parsed
-	newLinesFound     int64				// Number of new lines found in log that were parsed (not to be confused with \n)
-	NickNameHashTable map[string]string		// Nickname hash table from configuration
-	Profiles          map[string]map[string]string  // Profile hash table from configuration
-	Ignore            []string			// Ignore list from configuration
+	linesParsed       int64                        // Total number of lines parsed
+	newLinesFound     int64                        // Number of new lines found in log that were parsed (not to be confused with \n)
+	NickNameHashTable map[string]string            // Nickname hash table from configuration
+	Profiles          map[string]map[string]string // Profile hash table from configuration
+	Ignore            []string                     // Ignore list from configuration
 }
 
 func NewIrcLogReader(c Config) *IrcLogReader {
 	return &IrcLogReader{
-		RegexAction: regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
-		RegexMessage: regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
-		RegexParseAction: regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`),
+		RegexAction:       regexp.MustCompile(`^\[(.+)\] \* (.+)$`),
+		RegexMessage:      regexp.MustCompile(`^\[(.+)\] <(.+)> (.+)$`),
+		RegexParseAction:  regexp.MustCompile(`^\[(.+)\] \* (\S+) (.+)$`),
 		RegexParseMessage: regexp.MustCompile(`^\[(.+)\] <(\S+)> (.+)$`),
 		NickNameHashTable: c.NickNameHashTable,
-		Profiles: c.Profiles,
-		Ignore: c.Ignore,
+		Profiles:          c.Profiles,
+		Ignore:            c.Ignore,
 	}
 }
 
@@ -43,7 +43,7 @@ func (lr IrcLogReader) NewLinesFound() int64 {
 func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
 	// Open the input filename
 	file, err := os.Open(filename)
-	if (err != nil) {
+	if err != nil {
 		return
 	}
 
@@ -69,8 +69,8 @@ func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
 
 func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	var (
-		parsed[][]string
-		user User
+		parsed [][]string
+		user   User
 	)
 
 	// timestamp = [0][1]
@@ -152,7 +152,7 @@ func (lr *IrcLogReader) parseLine(line string, isAction bool, db *Database) {
 	// Store User into DB
 	db.SetUser(lineNick, user)
 
-	lr.newLinesFound++;
+	lr.newLinesFound++
 }
 
 //
@@ -170,7 +170,7 @@ func (lr IrcLogReader) ParseTime(inputDate string) time.Time {
 // Map the users nick if found in the configuration against a mapping.
 //
 func (lr IrcLogReader) MapNick(username string) string {
-	if val, ok := lr.NickNameHashTable[username]; ok{
+	if val, ok := lr.NickNameHashTable[username]; ok {
 		return val
 	}
 	return username
@@ -180,7 +180,7 @@ func (lr IrcLogReader) MapNick(username string) string {
 // Identify if the user is to be ignored
 //
 func (lr IrcLogReader) IsUserIgnored(username string) bool {
-	for _, n := range(lr.Ignore) {
+	for _, n := range lr.Ignore {
 		if username == n {
 			return true
 		}

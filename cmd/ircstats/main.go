@@ -1,25 +1,25 @@
 package main
 
 import (
-	"github.com/carbontwelve/go-irc-stats/ircstats"
 	"flag"
-	"os"
 	"fmt"
+	"github.com/carbontwelve/go-irc-stats/ircstats"
 	"log"
-	"time"
+	"os"
 	"strconv"
+	"time"
 )
 
 var (
 	Version string
-	Build string
+	Build   string
 
 	logReader ircstats.IrcLogReader
 
-	version = flag.Bool("version", false, "Display executable version and build.")
-	verbose = flag.Bool("v", false, "Display actual output")
+	version    = flag.Bool("version", false, "Display executable version and build.")
+	verbose    = flag.Bool("v", false, "Display actual output")
 	configPath = flag.String("c", "config.yaml", "Path to config.yaml")
-	cwd = flag.String("d", "", "change to this directory before doing anything")
+	cwd        = flag.String("d", "", "change to this directory before doing anything")
 )
 
 func main() {
@@ -36,14 +36,14 @@ The options are:
 	// Parse command line flags
 	flag.Parse()
 
-	if (*version) {
+	if *version {
 		fmt.Printf("Version: %s Build %s\n", Version, Build)
-		os.Exit(0);
+		os.Exit(0)
 	}
 
 	// Should we be noisy?
 	// If false, all stdout messages will be muted
-	if (*verbose) {
+	if *verbose {
 		fmt.Println("Being Loud!")
 	}
 
@@ -58,7 +58,7 @@ The options are:
 	// Load Configuration
 	config := ircstats.Config{}
 	configErr := config.Load(*configPath)
-	if (configErr != nil) {
+	if configErr != nil {
 		log.Fatal(configErr)
 	}
 
@@ -67,20 +67,20 @@ The options are:
 	db.Load(config.DatabaseLocation)
 
 	fmt.Println("Last Parsed: ", db.LastGenerated)
-	logReader = *ircstats.NewIrcLogReader(config);
+	logReader = *ircstats.NewIrcLogReader(config)
 
 	// Load log file and parse any new lines
-	logReaderErr := logReader.Load(config.Location, &db);
-	if (logReaderErr != nil) {
+	logReaderErr := logReader.Load(config.Location, &db)
+	if logReaderErr != nil {
 		log.Fatal(logReaderErr)
 	}
 
 	// Calculate
-	calculate(&db, config);
+	calculate(&db, config)
 
 	// Save database to disk
 	dbSaveErr := db.Save(config.DatabaseLocation)
-	if (logReaderErr != nil) {
+	if logReaderErr != nil {
 		log.Fatal(dbSaveErr)
 	}
 
@@ -111,16 +111,16 @@ The options are:
 
 	fmt.Println("==================================================")
 
-	vd := *ircstats.NewViewData(config);
+	vd := *ircstats.NewViewData(config)
 	j, _ := vd.GetJsonString()
 	fmt.Printf("%s\n", j)
 
 	//
 	// Generate the template
 	//
-	v := *ircstats.NewView();
+	v := *ircstats.NewView()
 	err := v.Parse("template.html", vd)
-	if (err != nil){
+	if err != nil {
 		panic(err)
 	}
 
@@ -176,14 +176,14 @@ func calculateActiveUsers(db *ircstats.Database) {
 		timePeriod[time.Now().AddDate(0, 0, -i).Format("2006-02-01")] = true
 	}
 
-	for _, u := range (db.Users) {
+	for _, u := range db.Users {
 		var (
-			wordCount int64
+			wordCount  int64
 			daysActive int64
 		)
 
 		// Check to see if user has been active within our time period (default past 30 days)
-		for timePeriodDate := range (timePeriod) {
+		for timePeriodDate := range timePeriod {
 			if _, ok := u.Days[timePeriodDate]; ok {
 				daysActive++
 				wordCount += u.Days[timePeriodDate]
@@ -220,25 +220,25 @@ func calculateHeatMapDays(db *ircstats.Database, heatMapInterval uint) {
 
 	var (
 		heatMapKey [6]int
-		now time.Time
-		totalDays int
-		firstWeek string
-		lastWeek string
+		now        time.Time
+		totalDays  int
+		firstWeek  string
+		lastWeek   string
 		weekValues []WeekValue
-		dayValues []DayValue
-		x int64
-		mx int64
-		y int64
-		weekLines int64
-		dayLines int64
-		cssClass string
+		dayValues  []DayValue
+		x          int64
+		mx         int64
+		y          int64
+		weekLines  int64
+		dayLines   int64
+		cssClass   string
 	)
 
 	now = time.Now()
 	totalDays = int(db.Channel.TotalDaysSeen())
 
 	// Create heatmap key
-	for i := 1; i < 6; i ++ {
+	for i := 1; i < 6; i++ {
 		heatMapKey[i] = int(heatMapInterval) * i
 	}
 
@@ -247,7 +247,7 @@ func calculateHeatMapDays(db *ircstats.Database, heatMapInterval uint) {
 		elementTime := now.AddDate(0, 0, int(-(totalDays - i)))
 
 		// Work out first week
-		if (i == 0) {
+		if i == 0 {
 			firstWeek = elementTime.Format("Jan-01")
 		}
 
@@ -255,15 +255,15 @@ func calculateHeatMapDays(db *ircstats.Database, heatMapInterval uint) {
 		y = int64(elementTime.Weekday())
 
 		// If day is a Sunday then begin new week
-		if (y == 0) {
+		if y == 0 {
 			x += 1
 			weekLines = 0
 			firstWeek = elementTime.Format("Jan-01")
 		}
 
 		// If this is the first day of the month
-		if (elementTime.Day() == 1) {
-			mx ++
+		if elementTime.Day() == 1 {
+			mx++
 		}
 
 		if db.Channel.HasDay(elementTime.Format("2006-02-01")) {
@@ -275,14 +275,14 @@ func calculateHeatMapDays(db *ircstats.Database, heatMapInterval uint) {
 		weekLines += dayLines
 
 		// If day is Saturday then end week
-		if (y == 6) {
-			lastWeek = elementTime.Format("Jan-01");
-			weekValues = append(weekValues, WeekValue{X: x, Value: weekLines, First: firstWeek, Last: lastWeek })
+		if y == 6 {
+			lastWeek = elementTime.Format("Jan-01")
+			weekValues = append(weekValues, WeekValue{X: x, Value: weekLines, First: firstWeek, Last: lastWeek})
 		}
 
 		// Identify class
 		classSet := false
-		for i := 1; i < 6; i ++ {
+		for i := 1; i < 6; i++ {
 			if int(dayLines) < heatMapKey[i] {
 				cssClass = "scale-" + strconv.Itoa(i)
 				classSet = true
@@ -294,6 +294,6 @@ func calculateHeatMapDays(db *ircstats.Database, heatMapInterval uint) {
 		}
 
 		// Append days value
-		dayValues = append(dayValues, DayValue{X: x, Y: y, Date: elementTime.Format("2006-02-01"), Class: cssClass, Value: dayLines })
+		dayValues = append(dayValues, DayValue{X: x, Y: y, Date: elementTime.Format("2006-02-01"), Class: cssClass, Value: dayLines})
 	}
 }

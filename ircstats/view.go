@@ -1,10 +1,10 @@
 package ircstats
 
 import (
+	"bytes"
 	"github.com/dustin/go-humanize"
 	"html/template"
 	"io/ioutil"
-	"bytes"
 	"strconv"
 )
 
@@ -12,9 +12,9 @@ type View struct {
 	viewFunctions template.FuncMap
 }
 
-func NewView() *View{
+func NewView() *View {
 	return &View{
-		viewFunctions : template.FuncMap{
+		viewFunctions: template.FuncMap{
 			"tableflip": func() string {
 				return "(╯°□°）╯︵ ┻━┻"
 			},
