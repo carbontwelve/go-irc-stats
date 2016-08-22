@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"io/ioutil"
 	"strconv"
+	"math"
 )
 
 type View struct {
@@ -48,8 +49,12 @@ func (v View) Parse(filename string, data ViewData) (err error) {
 			xx = xx + 4.5
 			return strconv.FormatFloat(xx, 'f', 6, 64)
 		},
+		"round": math.Floor,
 		"comma": humanize.Comma,
 		"int64": func(x int) int64 {
+			return int64(x)
+		},
+		"floattoint64": func (x float64) int64 {
 			return int64(x)
 		},
 	}
