@@ -591,7 +591,7 @@
         <tbody id="top-users-body"></tbody>
     </table>
 
-    <p>A top user is someone who‘s posted a large average number of words per day over the entire logging history.</p>
+    <p>A top user is someone who‘s posted a large number of words over the entire logging history.</p>
 
     <footer>
         <div id="last-generated-at"></div>
@@ -700,11 +700,11 @@
             sortBy = "WordsDay";
         }
 
-        for (var i = 0; i < myObject.SortedActiveUsers.length; i++) {
+        for (var i = 0; i < myObject.SortedTopUsers.length; i++) {
             var row = topUsersTableBody.insertRow();
-            var u = myObject.Users[myObject.SortedActiveUsers[i]];
+            var u = myObject.Users[myObject.SortedTopUsers[i]];
 
-            row.id = myObject.SortedActiveUsers[i];
+            row.id = myObject.SortedTopUsers[i];
 
             var celUsername = row.insertCell(0);
             var celAnchorNode = document.createElement('a');

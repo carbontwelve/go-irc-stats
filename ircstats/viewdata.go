@@ -57,8 +57,9 @@ type JsonData struct {
 	TotalActiveUsers  int64               // Number of active users within activity period (default 30 days)
 
 					      // Misc
-	Users             map[string]UserData // Users
-	SortedActiveUsers []string
+	Users             map[string]UserData // Users list
+	SortedActiveUsers []string	      // Sorted Users map by "activity"
+	SortedTopUsers    []string            // Sorted Users map by words
 }
 
 type sortedMap struct {
@@ -163,6 +164,7 @@ func (vd *ViewData) calculateUsers(db Database) {
 		timePeriod map[string]bool
 		users      map[string]UserData
 		activeUsers map[string]int
+		topUsers map[string]int
 
 		userWordCount int64
 		userDaysActive int64
@@ -170,6 +172,7 @@ func (vd *ViewData) calculateUsers(db Database) {
 
 	timePeriod = make(map[string]bool)
 	activeUsers = make(map[string]int)
+	topUsers = make(map[string]int)
 	users = make(map[string]UserData)
 
 	for i := 1; i < int(vd.JsonData.ActivityPeriod); i++ {
@@ -209,10 +212,12 @@ func (vd *ViewData) calculateUsers(db Database) {
 			viewUserData.WordsByDayInPeriod = float64(userWordCount) / float64(userDaysActive)
 			activeUsers[nick] = int(userDaysActive)
 		}
+		topUsers[nick] = int(viewUserData.TotalWords);
 		users[nick] = viewUserData
 	}
 
 	vd.JsonData.Users = users
+	vd.JsonData.SortedTopUsers = sortedKeys(topUsers);
 	vd.JsonData.SortedActiveUsers = sortedKeys(activeUsers);
 }
 
