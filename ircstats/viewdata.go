@@ -39,6 +39,7 @@ type JsonData struct {
 	ActivityPeriod    uint                // Activity Period from configuration
 
 					      // Dates
+	GeneratedAt       int64               // Timestamp of last generated at
 	FirstSeen         int64               // Timestamp of first message
 	LastSeen          int64               // Timestamp of last message
 	TotalDaysSeen     int64               // Number of days between FirstSeen and LastSeen
@@ -94,6 +95,7 @@ func NewViewData(c Config) *ViewData {
 	j := JsonData{
 		HeatMapInterval: c.HeatMapInterval,
 		ActivityPeriod:  c.ActivityPeriod,
+		GeneratedAt: time.Now().Unix(),
 	}
 
 	return &ViewData{

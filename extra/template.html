@@ -577,23 +577,38 @@
     </table>
 
     <footer>
+        <div id="last-generated-at"></div>
         <div>A golang port by <a href="http://photogabble.co.uk">Simon Dann</a> of <a
                 href="https://github.com/0x263b/Stats">0x263b/Stats</a></div>
     </footer>
 
 </main>
 <script src="//cdnjs.cloudflare.com/ajax/libs/numeral.js/1.4.5/numeral.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
 <script id="stats_json" type="application/json">{{ .JsonData }}</script>
 <script type="application/javascript">
     var json = document.getElementById("stats_json");
     var myObject = JSON.parse(json.textContent);
+    var lastGeneratedAt = moment.unix(myObject.GeneratedAt);
+
     console.log(myObject);
 
     var MonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var Days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
+    //
+    // DOM Elements
+    //
     var activeUsersTableBody = document.getElementById("active-users-body");
+    var lastGeneratedDiv = document.getElementById("last-generated-at");
 
+    // Display last generated ago
+    lastGeneratedDiv.textContent = "Generated " + lastGeneratedAt.fromNow();
+    lastGeneratedDiv.setAttribute("title", lastGeneratedAt.format());
+
+    //
+    // Display active users
+    //
     function displayActiveUsers(limit) {
 
         if (typeof limit === 'undefined') {
