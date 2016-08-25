@@ -156,7 +156,6 @@ func (vd *ViewData) Calculate(db Database) {
 
 	// Calculate Users
 	vd.calculateUsers(db)
-
 }
 
 func (vd *ViewData) calculateUsers(db Database) {
