@@ -608,8 +608,12 @@
 
     //
     // Display active users
+    // @todo add sorting by column
     //
-    function displayActiveUsers(limit) {
+    function displayActiveUsers(limit, sortBy) {
+        if (typeof sortBy === 'undefined') {
+            sortBy = "DaysActiveInPeriod";
+        }
 
         if (typeof limit === 'undefined') {
             limit = 8;
