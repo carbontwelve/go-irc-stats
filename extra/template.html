@@ -577,6 +577,22 @@
     </table>
     <p>An active user is someone who‘s posted at least one message in the past {{ .JsonData.ActivityPeriod }} days.</p>
 
+    <h2>Top Users</h2>
+    <table id="top-users">
+        <thead>
+        <tr>
+            <th></th>
+            <th>Words</th>
+            <th>Vocabulary</th>
+            <th>Words/Day</th>
+            <th>Last spoke</th>
+        </tr>
+        </thead>
+        <tbody id="top-users-body"></tbody>
+    </table>
+
+    <p>A top user is someone who‘s posted a large average number of words per day over the entire logging history.</p>
+
     <footer>
         <div id="last-generated-at"></div>
         <div>A golang port by <a href="http://photogabble.co.uk">Simon Dann</a> of <a href="https://github.com/0x263b/Stats">0x263b/Stats</a></div>
