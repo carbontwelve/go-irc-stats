@@ -33,6 +33,11 @@ type UserData struct {
 	ActivityPercentage float64          // Overall % contribution to Channel.WordCount
 }
 
+type TimeZone struct {
+	name string
+	offset int
+}
+
 type JsonData struct {
 					      // Configurable options
 	HeatMapInterval   uint                // HeatMap Interval from configuration
@@ -43,6 +48,7 @@ type JsonData struct {
 	FirstSeen         int64               // Timestamp of first message
 	LastSeen          int64               // Timestamp of last message
 	TotalDaysSeen     int64               // Number of days between FirstSeen and LastSeen
+	TimeZone          TimeZone
 
 					      // Averages
 	Averages          Averages            // Calculated Averages
@@ -98,6 +104,9 @@ func NewViewData(c Config) *ViewData {
 		ActivityPeriod:  c.ActivityPeriod,
 		GeneratedAt: time.Now().Unix(),
 	}
+
+	// Set timezone data for frontend
+	j.TimeZone.name, j.TimeZone.offset = time.Now().Zone();
 
 	return &ViewData{
 		PageTitle:       c.PageTitle,
