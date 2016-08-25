@@ -589,65 +589,71 @@
     var myObject = JSON.parse(json.textContent);
     console.log(myObject);
 
-    var MonthNames = [
-        "Jan", "Feb", "Mar",
-        "Apr", "May", "Jun", "Jul",
-        "Aug", "Sep", "Oct",
-        "Nov", "Dec"
-    ];
-
-    var Days = [
-        "Sun", "Mon", "Tue", "Wed",
-        "Thu", "Fri", "Sat"
-    ];
+    var MonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    var Days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
     var activeUsersTableBody = document.getElementById("active-users-body");
 
-    for(var i=0; i < myObject.SortedActiveUsers.length; i++) {
+    function displayActiveUsers(limit) {
 
-        var row = activeUsersTableBody.insertRow();
-        var u = myObject.Users[myObject.SortedActiveUsers[i]];
-
-        var celUsername = row.insertCell(0);
-        var celAnchorNode = document.createElement('a');
-        celAnchorNode.title = u.Username;
-        celAnchorNode.href = (u.Url.length > 0) ? u.Url : "#";
-
-        var celImageNode = document.createElement('img');
-        celImageNode.alt = u.Username;
-        celImageNode.src = (u.Avatar.length > 0) ? u.Avatar : "https://avatars.io/twitter/anon";
-
-        var celUsernameTextNode = document.createTextNode(u.Username);
-
-        if (u.Url.length > 0) {
-            celAnchorNode.appendChild(celImageNode);
-            celAnchorNode.appendChild(celUsernameTextNode);
-            celUsername.appendChild(celAnchorNode);
-        }else{
-            celUsername.appendChild(celImageNode);
-            celUsername.appendChild(celUsernameTextNode);
+        if (typeof limit === 'undefined') {
+            limit = 8;
+        }
+        if (limit == 0) {
+            return;
         }
 
-        var celWords = row.insertCell(1);
-        var celWordsTextNode = document.createTextNode(numeral(u.TotalWords).format('0,0'));
-        celWords.appendChild(celWordsTextNode);
+        for (var i = 0; i < myObject.SortedActiveUsers.length; i++) {
+            var row = activeUsersTableBody.insertRow();
+            var u = myObject.Users[myObject.SortedActiveUsers[i]];
 
-        var celWordsDay = row.insertCell(2);
-        var celWordsDayTextNode = document.createTextNode(numeral(u.WordsByDayInPeriod).format('0.00'));
-        celWordsDay.appendChild(celWordsDayTextNode);
+            var celUsername = row.insertCell(0);
+            var celAnchorNode = document.createElement('a');
+            celAnchorNode.title = u.Username;
+            celAnchorNode.href = (u.Url.length > 0) ? u.Url : "#";
 
-        var celDaysActive = row.insertCell(3);
-        var celDaysActiveTextNode = document.createTextNode(u.DaysActiveInPeriod);
-        celDaysActive.appendChild(celDaysActiveTextNode);
+            var celImageNode = document.createElement('img');
+            celImageNode.alt = u.Username;
+            celImageNode.src = (u.Avatar.length > 0) ? u.Avatar : "https://avatars.io/twitter/anon";
 
-        var date = new Date(u.LastSpoke*1000);
-        var celLastSpoke = row.insertCell(4);
-        var celLastSpokeTextNode = document.createTextNode(Days[date.getDay()] + ", " + MonthNames[date.getMonth()] + " " + date.getDay());
-        celLastSpoke.appendChild(celLastSpokeTextNode);
+            var celUsernameTextNode = document.createTextNode(u.Username);
 
-        if ((i+1) >= 8 ) { break; }
+            if (u.Url.length > 0) {
+                celAnchorNode.appendChild(celImageNode);
+                celAnchorNode.appendChild(celUsernameTextNode);
+                celUsername.appendChild(celAnchorNode);
+            } else {
+                celUsername.appendChild(celImageNode);
+                celUsername.appendChild(celUsernameTextNode);
+            }
+
+            var celWords = row.insertCell(1);
+            var celWordsTextNode = document.createTextNode(numeral(u.TotalWords).format('0,0'));
+            celWords.appendChild(celWordsTextNode);
+            celWords.setAttribute('data-value', u.TotalWords);
+
+            var celWordsDay = row.insertCell(2);
+            var celWordsDayTextNode = document.createTextNode(numeral(u.WordsByDayInPeriod).format('0.00'));
+            celWordsDay.appendChild(celWordsDayTextNode);
+            celWordsDay.setAttribute('data-value', u.WordsByDayInPeriod);
+
+            var celDaysActive = row.insertCell(3);
+            var celDaysActiveTextNode = document.createTextNode(u.DaysActiveInPeriod);
+            celDaysActive.appendChild(celDaysActiveTextNode);
+            celDaysActive.setAttribute('data-value', u.DaysActiveInPeriod);
+
+            var date = new Date(u.LastSpoke * 1000);
+            var celLastSpoke = row.insertCell(4);
+            var celLastSpokeTextNode = document.createTextNode(Days[date.getDay()] + ", " + MonthNames[date.getMonth()] + " " + date.getDay());
+            celLastSpoke.appendChild(celLastSpokeTextNode);
+            celLastSpoke.setAttribute('data-value', u.LastSpoke);
+
+            if ((i + 1) >= limit) {
+                break;
+            }
+        }
     }
-
+    displayActiveUsers(8);
 </script>
 </body>
 </html>
