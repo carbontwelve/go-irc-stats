@@ -704,6 +704,8 @@
             var row = topUsersTableBody.insertRow();
             var u = myObject.Users[myObject.SortedActiveUsers[i]];
 
+            row.id = myObject.SortedActiveUsers[i];
+
             var celUsername = row.insertCell(0);
             var celAnchorNode = document.createElement('a');
             celAnchorNode.title = u.Username;
