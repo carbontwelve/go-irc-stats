@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 	"sort"
+	"strconv"
 )
 
 //
@@ -34,8 +35,19 @@ type UserData struct {
 }
 
 type TimeZone struct {
-	name string
-	offset int
+	Name string
+	Offset int
+}
+
+func (tz TimeZone) Format() string {
+	var output string;
+
+	if (tz.Offset > 0){
+		output = "GMT +" + strconv.Itoa(tz.Offset)
+	}else{
+		output = "GMT -" + strconv.Itoa(tz.Offset)
+	}
+	return output;
 }
 
 type JsonData struct {
@@ -106,7 +118,8 @@ func NewViewData(c Config) *ViewData {
 	}
 
 	// Set timezone data for frontend
-	j.TimeZone.name, j.TimeZone.offset = time.Now().Zone();
+	j.TimeZone.Name, j.TimeZone.Offset = time.Now().Zone();
+	j.TimeZone.Offset = (j.TimeZone.Offset / 60) / 60; // We want the zone offset in hours
 
 	return &ViewData{
 		PageTitle:       c.PageTitle,
