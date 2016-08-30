@@ -108,6 +108,10 @@
             max-width: 200px;
         }
 
+        .centered{
+            text-align: center !important;
+        }
+
         .activity-numbers {
             display: -webkit-box;
             display: flex;
@@ -639,6 +643,18 @@
         }
         if (typeof sortBy === 'undefined') {
             sortBy = "DaysActiveInPeriod";
+        }
+
+        // If there are no users active in the past 30 days, then let the user know rather than displaying an
+        // empty table.
+        if (myObject.SortedActiveUsers.length == 0) {
+            var fullSpanRow = activeUsersTableBody.insertRow();
+            var fullSpanCol = fullSpanRow.insertCell(0);
+            fullSpanCol.colSpan = 5;
+            fullSpanCol.className = "centered";
+            fullSpanCol.textContent = "There where no active users within the past 30 days.";
+
+            return false;
         }
 
         for (var i = 0; i < myObject.SortedActiveUsers.length; i++) {
