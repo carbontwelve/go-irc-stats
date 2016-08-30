@@ -851,9 +851,9 @@
         var generateGraphKey = function () {
             var scaleDiv = document.getElementById("graph-scale");
 
-            for (var i = 1; i < 6; i++) {
+            for (var i = 0; i <= 5; i++) {
                 var domDiv = document.createElement("div");
-                domDiv.className = "scale-" + i;
+                domDiv.className = "scale-" + (i + 1);
                 domDiv.innerHTML = myObject.HeatMapInterval * i;
                 scaleDiv.appendChild(domDiv);
             }
