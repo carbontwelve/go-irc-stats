@@ -6,18 +6,19 @@ import (
 	"github.com/carbontwelve/go-irc-stats/ircstats"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 var (
 	Version string
-	Build   string
+	Build string
 
 	logReader ircstats.IrcLogReader
 
-	version    = flag.Bool("version", false, "Display executable version and build.")
-	verbose    = flag.Bool("v", false, "Display actual output")
+	version = flag.Bool("version", false, "Display executable version and build.")
+	verbose = flag.Bool("v", false, "Display actual output")
 	configPath = flag.String("c", "config.yaml", "Path to config.yaml")
-	cwd        = flag.String("d", "", "change to this directory before doing anything")
+	cwd = flag.String("d", "", "change to this directory before doing anything")
 )
 
 func main() {
@@ -68,23 +69,34 @@ The options are:
 	logReader = *ircstats.NewIrcLogReader(config)
 
 	// Load log file and parse any new lines
-	logReaderErr := logReader.Load(config.Location, &db)
+	// If config.Location is a directory, identify all files within and load one after the other
+	var logReaderErr error
+	if isDirectory(config.Location) {
+		logReaderErr = filepath.Walk(config.Location, func(path string, f os.FileInfo, err error) error {
+			if isDirectory(path) == true {
+				return nil;
+			}
+			return logReader.Load(path, &db)
+		});
+	} else {
+		logReaderErr = logReader.Load(config.Location, &db)
+	}
+
 	if logReaderErr != nil {
 		log.Fatal(logReaderErr)
 	}
 
+	//
 	// Save database to disk
+	//
 	dbSaveErr := db.Save(config.DatabaseLocation)
-	if logReaderErr != nil {
+	if dbSaveErr != nil {
 		log.Fatal(dbSaveErr)
 	}
 
 	vd := *ircstats.NewViewData(config)
 	vd.Calculate(db)
 	vd.JsonData.Debug()
-
-	j, _ := vd.GetJsonString()
-	fmt.Printf("%s\n", j)
 
 	//
 	// Generate the template
@@ -94,4 +106,12 @@ The options are:
 	if err != nil {
 		panic(err)
 	}
+}
+
+// Returns true if path is a directory
+func isDirectory(path string) bool {
+	if info, err := os.Stat(path); err == nil && info.IsDir() {
+		return true;
+	}
+	return false;
 }
