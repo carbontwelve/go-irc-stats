@@ -18,6 +18,7 @@ type ViewData struct {
 	JsonData        JsonData // Json data for exporting to page
 }
 
+// Data mapping for front end JSON
 type UserData struct {
 	Username           string
 	Url                string
@@ -31,12 +32,19 @@ type UserData struct {
 	DaysActiveInPeriod int64
 	TotalWordsInPeriod int64
 	WordsByDayInPeriod float64
-	ActivityPercentage float64 // Overall % contribution to Channel.WordCount
+	ActivityPercentage float64          // Overall % contribution to Channel.WordCount
 }
 
+// Data mapping for passing timezone data to front end JSON
 type TimeZone struct {
 	Name   string
 	Offset int
+}
+
+// Data mapping for passing date data to front end JSON
+type GraphDay struct {
+	Date  string
+	Value int64
 }
 
 func (tz TimeZone) Format() string {
@@ -51,30 +59,33 @@ func (tz TimeZone) Format() string {
 }
 
 type JsonData struct {
-	// Configurable options
-	HeatMapInterval uint // HeatMap Interval from configuration
-	ActivityPeriod  uint // Activity Period from configuration
+					      // Configurable options
+	HeatMapInterval   uint                // HeatMap Interval from configuration
+	ActivityPeriod    uint                // Activity Period from configuration
 
-	// Dates
-	GeneratedAt   int64 // Timestamp of last generated at
-	FirstSeen     int64 // Timestamp of first message
-	LastSeen      int64 // Timestamp of last message
-	TotalDaysSeen int64 // Number of days between FirstSeen and LastSeen
-	TimeZone      TimeZone
+					      // Dates
+	GeneratedAt       int64               // Timestamp of last generated at
+	FirstSeen         int64               // Timestamp of first message
+	LastSeen          int64               // Timestamp of last message
+	TotalDaysSeen     int64               // Number of days between FirstSeen and LastSeen
+	TimeZone          TimeZone
 
-	// Averages
-	Averages Averages // Calculated Averages
+					      // Averages
+	Averages          Averages            // Calculated Averages
 
-	// Counters
-	MaxDay           MaxDay  // Calculated Max Day
-	MaxHour          MaxHour // Calculated Max Hour
-	MaxWeek          MaxWeek // Calculated Max Week
-	TotalLines       int64   // Lines parsed in total
-	TotalWords       int64   // Total Words (all words multiplied by times used)
-	TotalUsers       int64   // Number of unique users
-	TotalActiveUsers int64   // Number of active users within activity period (default 30 days)
+					      // Counters
+	MaxDay            MaxDay              // Calculated Max Day
+	MaxHour           MaxHour             // Calculated Max Hour
+	MaxWeek           MaxWeek             // Calculated Max Week
+	TotalLines        int64               // Lines parsed in total
+	TotalWords        int64               // Total Words (all words multiplied by times used)
+	TotalUsers        int64               // Number of unique users
+	TotalActiveUsers  int64               // Number of active users within activity period (default 30 days)
 
-	// Misc
+					      // Graph Data
+	Days              []GraphDay
+
+					      // Misc
 	Users             map[string]UserData // Users list
 	SortedActiveUsers []string            // Sorted Users map by "activity"
 	SortedTopUsers    []string            // Sorted Users map by words
@@ -179,6 +190,11 @@ func (vd *ViewData) Calculate(db Database) {
 
 	// Calculate Users
 	vd.calculateUsers(db)
+
+	// @todo Format data for Graph Usage
+	// loop one day each between vd.JsonData.FirstSeen and vd.JsonData.LastSeen
+	//vd.JsonData.Days = append(vd.JsonData.Days, GraphDay{Date: dt, Value: 0})
+
 }
 
 func (vd *ViewData) calculateUsers(db Database) {
@@ -188,7 +204,7 @@ func (vd *ViewData) calculateUsers(db Database) {
 		activeUsers map[string]int
 		topUsers    map[string]int
 
-		userWordCount  int64
+		userWordCount int64
 		userDaysActive int64
 	)
 
