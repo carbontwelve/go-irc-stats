@@ -244,6 +244,7 @@ func (vd *ViewData) calculateUsers(db Database) {
 	vd.JsonData.TotalActiveUsers = int64(len(vd.JsonData.SortedActiveUsers))
 }
 
+// Returns a json string of the JsonData, good for debugging.
 func (vd ViewData) GetJsonString() (j []byte, err error) {
 	j, err = json.Marshal(vd.JsonData)
 	return
