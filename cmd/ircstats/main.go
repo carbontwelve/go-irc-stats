@@ -11,15 +11,15 @@ import (
 
 var (
 	Version string
-	Build string
+	Build   string
 
 	logReader ircstats.IrcLogReader
 
-	version = flag.Bool("version", false, "Display executable version and build.")
-	cleardb = flag.Bool("del", false, "Delete database and re-parse from the beginning")
-	verbose = flag.Bool("v", false, "Display actual output")
+	version    = flag.Bool("version", false, "Display executable version and build.")
+	cleardb    = flag.Bool("del", false, "Delete database and re-parse from the beginning")
+	verbose    = flag.Bool("v", false, "Display actual output")
 	configPath = flag.String("c", "config.yaml", "Path to config.yaml")
-	cwd = flag.String("d", "", "change to this directory before doing anything")
+	cwd        = flag.String("d", "", "change to this directory before doing anything")
 )
 
 func main() {
@@ -72,14 +72,13 @@ The options are:
 	if isDirectory(config.Location) {
 		logReaderErr = filepath.Walk(config.Location, func(path string, f os.FileInfo, err error) error {
 			if isDirectory(path) == true {
-				return nil;
+				return nil
 			}
 			return logReader.Load(path, &db)
-		});
+		})
 	} else {
 		logReaderErr = logReader.Load(config.Location, &db)
 	}
-
 	logError(logReaderErr)
 
 	//
@@ -101,9 +100,9 @@ The options are:
 // Returns true if path is a directory
 func isDirectory(path string) bool {
 	if info, err := os.Stat(path); err == nil && info.IsDir() {
-		return true;
+		return true
 	}
-	return false;
+	return false
 }
 
 // Logs an error if err is not nil

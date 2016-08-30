@@ -3,9 +3,9 @@ package ircstats
 import (
 	"encoding/json"
 	"fmt"
-	"time"
 	"sort"
 	"strconv"
+	"time"
 )
 
 //
@@ -31,52 +31,52 @@ type UserData struct {
 	DaysActiveInPeriod int64
 	TotalWordsInPeriod int64
 	WordsByDayInPeriod float64
-	ActivityPercentage float64          // Overall % contribution to Channel.WordCount
+	ActivityPercentage float64 // Overall % contribution to Channel.WordCount
 }
 
 type TimeZone struct {
-	Name string
+	Name   string
 	Offset int
 }
 
 func (tz TimeZone) Format() string {
-	var output string;
+	var output string
 
-	if (tz.Offset > 0){
+	if tz.Offset > 0 {
 		output = "GMT +" + strconv.Itoa(tz.Offset)
-	}else{
+	} else {
 		output = "GMT -" + strconv.Itoa(tz.Offset)
 	}
-	return output;
+	return output
 }
 
 type JsonData struct {
-					      // Configurable options
-	HeatMapInterval   uint                // HeatMap Interval from configuration
-	ActivityPeriod    uint                // Activity Period from configuration
+	// Configurable options
+	HeatMapInterval uint // HeatMap Interval from configuration
+	ActivityPeriod  uint // Activity Period from configuration
 
-					      // Dates
-	GeneratedAt       int64               // Timestamp of last generated at
-	FirstSeen         int64               // Timestamp of first message
-	LastSeen          int64               // Timestamp of last message
-	TotalDaysSeen     int64               // Number of days between FirstSeen and LastSeen
-	TimeZone          TimeZone
+	// Dates
+	GeneratedAt   int64 // Timestamp of last generated at
+	FirstSeen     int64 // Timestamp of first message
+	LastSeen      int64 // Timestamp of last message
+	TotalDaysSeen int64 // Number of days between FirstSeen and LastSeen
+	TimeZone      TimeZone
 
-					      // Averages
-	Averages          Averages            // Calculated Averages
+	// Averages
+	Averages Averages // Calculated Averages
 
-					      // Counters
-	MaxDay            MaxDay              // Calculated Max Day
-	MaxHour           MaxHour             // Calculated Max Hour
-	MaxWeek           MaxWeek             // Calculated Max Week
-	TotalLines        int64               // Lines parsed in total
-	TotalWords        int64               // Total Words (all words multiplied by times used)
-	TotalUsers        int64               // Number of unique users
-	TotalActiveUsers  int64               // Number of active users within activity period (default 30 days)
+	// Counters
+	MaxDay           MaxDay  // Calculated Max Day
+	MaxHour          MaxHour // Calculated Max Hour
+	MaxWeek          MaxWeek // Calculated Max Week
+	TotalLines       int64   // Lines parsed in total
+	TotalWords       int64   // Total Words (all words multiplied by times used)
+	TotalUsers       int64   // Number of unique users
+	TotalActiveUsers int64   // Number of active users within activity period (default 30 days)
 
-					      // Misc
+	// Misc
 	Users             map[string]UserData // Users list
-	SortedActiveUsers []string	      // Sorted Users map by "activity"
+	SortedActiveUsers []string            // Sorted Users map by "activity"
 	SortedTopUsers    []string            // Sorted Users map by words
 }
 
@@ -114,12 +114,12 @@ func NewViewData(c Config) *ViewData {
 	j := JsonData{
 		HeatMapInterval: c.HeatMapInterval,
 		ActivityPeriod:  c.ActivityPeriod,
-		GeneratedAt: time.Now().Unix(),
+		GeneratedAt:     time.Now().Unix(),
 	}
 
 	// Set timezone data for frontend
-	j.TimeZone.Name, j.TimeZone.Offset = time.Now().Zone();
-	j.TimeZone.Offset = (j.TimeZone.Offset / 60) / 60; // We want the zone offset in hours
+	j.TimeZone.Name, j.TimeZone.Offset = time.Now().Zone()
+	j.TimeZone.Offset = (j.TimeZone.Offset / 60) / 60 // We want the zone offset in hours
 
 	return &ViewData{
 		PageTitle:       c.PageTitle,
@@ -183,12 +183,12 @@ func (vd *ViewData) Calculate(db Database) {
 
 func (vd *ViewData) calculateUsers(db Database) {
 	var (
-		timePeriod map[string]bool
-		users      map[string]UserData
+		timePeriod  map[string]bool
+		users       map[string]UserData
 		activeUsers map[string]int
-		topUsers map[string]int
+		topUsers    map[string]int
 
-		userWordCount int64
+		userWordCount  int64
 		userDaysActive int64
 	)
 
@@ -234,13 +234,13 @@ func (vd *ViewData) calculateUsers(db Database) {
 			viewUserData.WordsByDayInPeriod = float64(userWordCount) / float64(userDaysActive)
 			activeUsers[nick] = int(userDaysActive)
 		}
-		topUsers[nick] = int(viewUserData.TotalWords);
+		topUsers[nick] = int(viewUserData.TotalWords)
 		users[nick] = viewUserData
 	}
 
 	vd.JsonData.Users = users
-	vd.JsonData.SortedTopUsers = sortedKeys(topUsers);
-	vd.JsonData.SortedActiveUsers = sortedKeys(activeUsers);
+	vd.JsonData.SortedTopUsers = sortedKeys(topUsers)
+	vd.JsonData.SortedActiveUsers = sortedKeys(activeUsers)
 }
 
 func (vd ViewData) GetJsonString() (j []byte, err error) {
