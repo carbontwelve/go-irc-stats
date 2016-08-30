@@ -521,7 +521,7 @@
 
     <div id="charts">
         <div class="charts">
-            <div class="chart">
+            <div id="total-activity-graph" class="chart">
                 ### todo add svg ###
             </div>
 
@@ -840,11 +840,27 @@
 
     function displayTotalActivity() {
 
-        var generateGraphBar = function () {
+        var makeSVG = function(tag, attrs) {
+            var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+            for (var k in attrs){
+                if(k=="xlink:href"){
+                    el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
+                }else{
+                    el.setAttribute(k, attrs[k]);
+                }
+            }
+            return el;
+        };
+
+        var generateDaysGraphBar = function () {
 
         };
 
-        var generateGraphSquare = function () {
+        var generateWeekGraphHeatMap = function () {
+
+        };
+
+        var generateGraphLabels = function () {
 
         };
 
@@ -858,6 +874,17 @@
                 scaleDiv.appendChild(domDiv);
             }
         };
+
+        var domTarget = document.getElementById("total-activity-graph");
+
+        var domSvg = makeSVG("test", {
+            height: "275px",
+            "version": "1.1",
+            "xmlns": "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            "xmlns:data": "http://www.example.com/data"
+        });
+        domTarget.appendChild(domSvg);
 
         generateGraphKey();
     }
