@@ -109,7 +109,10 @@ func isDirectory(path string) bool {
 // Logs an error if err is not nil
 func logError(err error) {
 	if err != nil {
-		log.Fatal(err)
-		//panic(err) @todo if debug mode enabled then panic...
+		if *verbose {
+			panic(err)
+		} else {
+			log.Fatal(err)
+		}
 	}
 }
