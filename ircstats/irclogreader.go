@@ -42,6 +42,7 @@ func (lr IrcLogReader) NewLinesFound() int64 {
 
 func (lr *IrcLogReader) Load(filename string, db *Database) (err error) {
 	// Open the input filename
+	// this will not error if filename is not a file...
 	file, err := os.Open(filename)
 	if err != nil {
 		return
