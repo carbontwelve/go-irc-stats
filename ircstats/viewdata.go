@@ -241,6 +241,7 @@ func (vd *ViewData) calculateUsers(db Database) {
 	vd.JsonData.Users = users
 	vd.JsonData.SortedTopUsers = sortedKeys(topUsers)
 	vd.JsonData.SortedActiveUsers = sortedKeys(activeUsers)
+	vd.JsonData.TotalActiveUsers = int64(len(vd.JsonData.SortedActiveUsers))
 }
 
 func (vd ViewData) GetJsonString() (j []byte, err error) {
