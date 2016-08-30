@@ -525,9 +525,7 @@
                 ### todo add svg ###
             </div>
 
-            <div class="key">
-                ### todo add scale ###
-            </div>
+            <div id="graph-scale" class="key"></div>
 
             <div class="hover">
                 <div class="date"></div>
@@ -840,9 +838,35 @@
         shareOfActivityDiv.appendChild(stackedChartLegend);
     }
 
+    function displayTotalActivity() {
+
+        var generateGraphBar = function () {
+
+        };
+
+        var generateGraphSquare = function () {
+
+        };
+
+        var generateGraphKey = function () {
+            var scaleDiv = document.getElementById("graph-scale");
+
+            for (var i = 1; i < 6; i++) {
+                var domDiv = document.createElement("div");
+                domDiv.className = "scale-" + i;
+                domDiv.innerHTML = myObject.HeatMapInterval * i;
+                scaleDiv.appendChild(domDiv);
+            }
+        };
+
+        generateGraphKey();
+    }
+
     displayActiveUsers(10);
     displayTopUsers(10);
     displayShareOfActivity(9);
+    displayTotalActivity();
+
 </script>
 </body>
 </html>
