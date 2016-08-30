@@ -803,6 +803,18 @@
             return domLi;
         };
 
+        var makeChartBarElement = function (username, percentage, className) {
+            var domDiv = document.createElement("div");
+            domDiv.setAttribute("title", username);
+            if (percentage > 0) {
+                domDiv.style = "width: " + percentage + "%";
+            }
+            if (typeof className !== "undefined") {
+                domDiv.className = className;
+            }
+            return domDiv;
+        };
+
         var stackedChartDiv = document.createElement("div");
         var percentageCounter = 0;
         stackedChartDiv.className = "stacked-chart";
@@ -812,12 +824,7 @@
         for (var i = 0; i < myObject.SortedTopUsers.length; i++) {
             var u = myObject.Users[myObject.SortedTopUsers[i]];
             if ((i + 1) <= limit) {
-                // Append stacked chart element
-                var stackedChartUserDiv = document.createElement("div");
-                stackedChartUserDiv.setAttribute("title", u.Username);
-                stackedChartUserDiv.style = "width: "+ u.ActivityPercentage +"%";
-                stackedChartDiv.appendChild(stackedChartUserDiv)
-
+                stackedChartDiv.appendChild(makeChartBarElement(u.Username, u.ActivityPercentage));
                 stackedChartLegend.appendChild(makeLegendElement(u.Username, u.ActivityPercentage));
             }else{
                 percentageCounter += u.ActivityPercentage;
@@ -825,11 +832,7 @@
         }
 
         // Add last element
-        var lastStackedChartUserDiv = document.createElement("div");
-        lastStackedChartUserDiv.setAttribute("title", "Everyone else");
-        lastStackedChartUserDiv.className = "last";
-        stackedChartDiv.appendChild(lastStackedChartUserDiv);
-
+        stackedChartDiv.appendChild(makeChartBarElement("Everyone else", -1, "last"));
         stackedChartLegend.appendChild(makeLegendElement("Everyone else", percentageCounter));
 
         // Append stacked chart to container div
