@@ -16,6 +16,7 @@ var (
 	logReader ircstats.IrcLogReader
 
 	version = flag.Bool("version", false, "Display executable version and build.")
+	cleardb = flag.Bool("del", false, "Delete database and re-parse from the beginning")
 	verbose = flag.Bool("v", false, "Display actual output")
 	configPath = flag.String("c", "config.yaml", "Path to config.yaml")
 	cwd = flag.String("d", "", "change to this directory before doing anything")
@@ -48,21 +49,18 @@ The options are:
 
 	// Should we change the current working directory? (This is super useful when testing)
 	if *cwd != "" {
-		err := os.Chdir(*cwd)
-		if err != nil {
-			log.Fatal(err)
-		}
+		logError(os.Chdir(*cwd))
 	}
 
 	// Load Configuration
 	config := ircstats.Config{}
-	configErr := config.Load(*configPath)
-	if configErr != nil {
-		log.Fatal(configErr)
-	}
+	logError(config.Load(*configPath))
 
 	// Load Data Store (I call it Database, but its actually a binary file)
 	db := ircstats.Database{}
+	if *cleardb {
+		logError(os.Remove(config.DatabaseLocation))
+	}
 	db.Load(config.DatabaseLocation)
 
 	fmt.Println("Last Parsed: ", db.LastGenerated)
@@ -82,17 +80,12 @@ The options are:
 		logReaderErr = logReader.Load(config.Location, &db)
 	}
 
-	if logReaderErr != nil {
-		log.Fatal(logReaderErr)
-	}
+	logError(logReaderErr)
 
 	//
 	// Save database to disk
 	//
-	dbSaveErr := db.Save(config.DatabaseLocation)
-	if dbSaveErr != nil {
-		log.Fatal(dbSaveErr)
-	}
+	logError(db.Save(config.DatabaseLocation))
 
 	vd := *ircstats.NewViewData(config)
 	vd.Calculate(db)
@@ -102,10 +95,7 @@ The options are:
 	// Generate the template
 	//
 	v := *ircstats.NewView()
-	err := v.Parse("template.html", vd)
-	if err != nil {
-		panic(err)
-	}
+	logError(v.Parse("template.html", vd))
 }
 
 // Returns true if path is a directory
@@ -114,4 +104,12 @@ func isDirectory(path string) bool {
 		return true;
 	}
 	return false;
+}
+
+// Logs an error if err is not nil
+func logError(err error) {
+	if err != nil {
+		log.Fatal(err)
+		//panic(err) @todo if debug mode enabled then panic...
+	}
 }
