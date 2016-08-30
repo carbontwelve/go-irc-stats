@@ -629,6 +629,7 @@
     var activeUsersTableBody = document.getElementById("active-users-body");
     var topUsersTableBody = document.getElementById("top-users-body");
     var lastGeneratedDiv = document.getElementById("last-generated-at");
+    var shareOfActivityDiv = document.getElementById("activity-percentage");
 
     // Display last generated ago
     lastGeneratedDiv.textContent = "Generated " + lastGeneratedAt.fromNow();
@@ -776,8 +777,69 @@
         }
     }
 
-    displayActiveUsers(8);
-    displayTopUsers(8);
+    function displayShareOfActivity(limit){
+        if (typeof limit === 'undefined') {
+            limit = 8;
+        }
+        if (limit == 0) {
+            return;
+        }
+
+        var makeLegendElement = function (username, percentage) {
+            var domLi = document.createElement("li");
+            var domAnchor = document.createElement("a");
+            var domStrong = document.createElement("strong");
+            var domSpan = document.createElement("span");
+
+            domSpan.className = "color";
+            domAnchor.href = "#" + username;
+            domAnchor.appendChild(domSpan);
+            domAnchor.innerHTML += " " + username;
+            domStrong.textContent = numeral(percentage).format('0.00') + "%";
+
+            domLi.appendChild(domAnchor);
+            domLi.appendChild(domStrong);
+
+            return domLi;
+        };
+
+        var stackedChartDiv = document.createElement("div");
+        var percentageCounter = 0;
+        stackedChartDiv.className = "stacked-chart";
+
+        var stackedChartLegend = document.createElement("ol");
+
+        for (var i = 0; i < myObject.SortedTopUsers.length; i++) {
+            var u = myObject.Users[myObject.SortedTopUsers[i]];
+            if ((i + 1) <= limit) {
+                // Append stacked chart element
+                var stackedChartUserDiv = document.createElement("div");
+                stackedChartUserDiv.setAttribute("title", u.Username);
+                stackedChartUserDiv.style = "width: "+ u.ActivityPercentage +"%";
+                stackedChartDiv.appendChild(stackedChartUserDiv)
+
+                stackedChartLegend.appendChild(makeLegendElement(u.Username, u.ActivityPercentage));
+            }else{
+                percentageCounter += u.ActivityPercentage;
+            }
+        }
+
+        // Add last element
+        var lastStackedChartUserDiv = document.createElement("div");
+        lastStackedChartUserDiv.setAttribute("title", "Everyone else");
+        lastStackedChartUserDiv.className = "last";
+        stackedChartDiv.appendChild(lastStackedChartUserDiv);
+
+        stackedChartLegend.appendChild(makeLegendElement("Everyone else", percentageCounter));
+
+        // Append stacked chart to container div
+        shareOfActivityDiv.appendChild(stackedChartDiv);
+        shareOfActivityDiv.appendChild(stackedChartLegend);
+    }
+
+    displayActiveUsers(10);
+    displayTopUsers(10);
+    displayShareOfActivity(9);
 </script>
 </body>
 </html>
