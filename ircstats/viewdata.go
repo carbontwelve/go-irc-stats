@@ -28,7 +28,6 @@ type UserData struct {
 	TotalWords         int64            // Count of words
 	Averages           Averages         // Used for words/day
 	Vocabulary         int64            // Number of different words used
-	Words              map[string]int64 // World cloud
 	DaysActiveInPeriod int64
 	TotalWordsInPeriod int64
 	WordsByDayInPeriod float64
@@ -41,11 +40,25 @@ type TimeZone struct {
 	Offset int
 }
 
-// Data mapping for passing date data to front end JSON
-type GraphDay struct {
-	Date  string
-	Value int64
+// Data mapping for passing week date data to front end JSON
+// This is used for the by week bar graph
+type SvgGraphWeek struct {
+	First string // Week beginning date e.g June 12
+	Last  string // Week ending date e.g June 18
+	Value int64  // e.g. Lines
 }
+
+// Data mapping for passing day date data to front end JSON
+// This is used for the heatmap
+type SvgGraphDay struct {
+	Date  string
+	Value int64 // e.g. Lines
+}
+
+//type GraphData struct {
+//	Days  []SvgGraphDay
+//Weeks []SvgGraphWeek
+//}
 
 func (tz TimeZone) Format() string {
 	var output string
@@ -83,7 +96,7 @@ type JsonData struct {
 	TotalActiveUsers  int64               // Number of active users within activity period (default 30 days)
 
 					      // Graph Data
-	Days              []GraphDay
+	Days              []SvgGraphDay
 
 					      // Misc
 	Users             map[string]UserData // Users list
@@ -193,8 +206,41 @@ func (vd *ViewData) Calculate(db Database) {
 
 	// @todo Format data for Graph Usage
 	// loop one day each between vd.JsonData.FirstSeen and vd.JsonData.LastSeen
+
+	// Calculate Date Data for graphs
+	vd.calculateDateData(db);
+
 	//vd.JsonData.Days = append(vd.JsonData.Days, GraphDay{Date: dt, Value: 0})
 
+}
+
+func (vd *ViewData) calculateDateData(db Database) {
+	var (
+		timeNow time.Time
+		elementTime time.Time
+		date string
+		lines int64
+		i int64
+		days []SvgGraphDay
+	)
+
+	timeNow = time.Now()
+	days = make([]SvgGraphDay, (vd.JsonData.TotalDaysSeen));
+
+	for i = 0; i < vd.JsonData.TotalDaysSeen; i++ {
+		elementTime = timeNow.AddDate(0, 0, int(-(vd.JsonData.TotalDaysSeen - i)))
+		date = elementTime.Format("2006-02-01");
+
+		if db.Channel.HasDay(date) {
+			lines = db.Channel.Days[date]
+		} else {
+			lines = 0
+		}
+
+		days[i] = SvgGraphDay{Date: date, Value: lines }
+	}
+
+	vd.JsonData.Days = days;
 }
 
 func (vd *ViewData) calculateUsers(db Database) {
@@ -236,7 +282,6 @@ func (vd *ViewData) calculateUsers(db Database) {
 			LastSpoke:          u.LastSeen,
 			TotalWords:         u.WordCount,
 			Vocabulary:         int64(len(u.Words)),
-			Words:              u.Words,
 			DaysActiveInPeriod: userDaysActive,
 			TotalWordsInPeriod: userWordCount,
 			ActivityPercentage: (float64(u.WordCount) / float64(db.Channel.WordCount)) * 100,
