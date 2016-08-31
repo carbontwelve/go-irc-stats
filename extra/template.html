@@ -534,7 +534,7 @@
     <div id="hourly">
         <div id="active-times-graph" class="chart"></div>
         <div class="hover">
-            <div class="timezone-label">UTC</div>
+            <div class="timezone-label">{{ .JsonData.TimeZone.Format }} ({{ .JsonData.TimeZone.Name }})</div>
             <div class="lines"></div>
         </div>
     </div>
@@ -608,6 +608,8 @@
     var myObject = JSON.parse(json.textContent);
     var lastGeneratedAt = moment.unix(myObject.GeneratedAt);
 
+    console.log(myObject); // debug
+
     //
     // Helpers
     //
@@ -633,7 +635,7 @@
     };
     var insertHTML = function(selector, html) {
         document.querySelector(selector).innerHTML = html
-    }
+    };
 
     var MonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var Days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -1066,7 +1068,15 @@
 
         // Loop over all hours and build hourly graph
         var parseHours = function () {
-
+            for (var i = 0; i < myObject.Hours.length; i++) {
+                svgHours.appendChild(makeSVG("rect", {
+                    x: i * 10,
+                    y: 0,
+                    width: 9,
+                    height: Math.round((myObject.Hours[i] / myObject.MaxHour.Lines) * 100),
+                    "data:lines": myObject.Hours[i]
+                }))
+            }
         };
 
         var generateMostActiveTimesLabels = function(target, data){
@@ -1142,6 +1152,14 @@
             insertHTML("#charts .hover .date", moment(date).format("ddd, MMM, Do"));
             insertHTML("#charts .hover .lines", numeral(lines).format("0,0") + " lines")
         }});
+
+        var hoursHover = function (event) {
+            var lines = event.target.getAttribute("data:lines")
+            insertHTML("#hourly .hover .lines", numeral(lines).format("0,0") + " lines")
+        };
+
+        listenAll("#hours rect", "mouseover", hoursHover)
+        listenAll("#weekdays rect", "mouseover", hoursHover)
     }
 
     displayActiveUsers(10);

@@ -85,6 +85,7 @@ type JsonData struct {
 
 					      // Graph Data
 	Days              []SvgGraphDay
+	Hours             [24]int64
 
 					      // Misc
 	Users             map[string]UserData // Users list
@@ -199,6 +200,9 @@ func (vd *ViewData) Calculate(db Database) {
 	// Calculate Date Data for graphs
 	vd.calculateDateData(db);
 
+	// Copy Hour Data for graphs
+	vd.JsonData.Hours = db.Channel.Hours;
+
 	// @todo: trim the top users lists, currently it displays all users, but should it only include the top ones?
 }
 
@@ -230,6 +234,7 @@ func (vd *ViewData) calculateDateData(db Database) {
 
 	vd.JsonData.Days = days;
 }
+
 
 func (vd *ViewData) calculateUsers(db Database) {
 	var (
