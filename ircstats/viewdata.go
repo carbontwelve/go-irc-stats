@@ -193,6 +193,8 @@ func (vd *ViewData) Calculate(db Database) {
 
 	// Calculate Date Data for graphs
 	vd.calculateDateData(db);
+
+	// @todo: trim the top users lists, currently it displays all users, but should it only include the top ones?
 }
 
 func (vd *ViewData) calculateDateData(db Database) {
