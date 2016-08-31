@@ -610,7 +610,32 @@
     var myObject = JSON.parse(json.textContent);
     var lastGeneratedAt = moment.unix(myObject.GeneratedAt);
 
-    console.log(myObject);
+    //
+    // Helpers
+    //
+    var makeSVG = function(tag, attrs, innerHTML) {
+        var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
+        for (var k in attrs){
+            if(k=="xlink:href"){
+                el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
+            }else{
+                el.setAttribute(k, attrs[k]);
+            }
+        }
+        if (typeof innerHTML !== "undefined") {
+            el.innerHTML = innerHTML;
+        }
+        return el;
+    };
+    var listenAll = function(selector, event, fn) {
+        var list = document.querySelectorAll(selector);
+        for (var i = 0, len = list.length; i < len; i++) {
+            list[i].addEventListener(event, fn, false)
+        }
+    };
+    var insertHTML = function(selector, html) {
+        document.querySelector(selector).innerHTML = html
+    }
 
     var MonthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     var Days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -833,22 +858,6 @@
     }
 
     function displayTotalActivity() {
-
-        var makeSVG = function(tag, attrs, innerHTML) {
-            var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
-            for (var k in attrs){
-                if(k=="xlink:href"){
-                    el.setAttributeNS('http://www.w3.org/1999/xlink', 'href', attrs[k]);
-                }else{
-                    el.setAttribute(k, attrs[k]);
-                }
-            }
-            if (typeof innerHTML !== "undefined") {
-                el.innerHTML = innerHTML;
-            }
-            return el;
-        };
-
         var heatMapScale = [];
         var generateGraphKey = function () {
             var scaleDiv = document.getElementById("graph-scale");
@@ -1007,6 +1016,13 @@
         domSvg.appendChild(svgDays);
         domSvg.appendChild(svgLabels);
         domTarget.appendChild(domSvg);
+
+        listenAll("#days rect",  "mouseover", function (event){ {
+            var lines = event.target.getAttribute("data:lines");
+            var date  = event.target.getAttribute("data:date");
+            insertHTML("#charts .hover .date", moment(date).format("ddd, MMM, Do"));
+            insertHTML("#charts .hover .lines", numeral(lines).format("0,0") + " lines")
+        }});
     }
 
     displayActiveUsers(10);
