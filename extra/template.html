@@ -520,17 +520,11 @@
     </div>
 
     <div id="charts">
-        <div class="charts">
-            <div id="total-activity-graph" class="chart">
-                ### todo add svg ###
-            </div>
-
-            <div id="graph-scale" class="key"></div>
-
-            <div class="hover">
-                <div class="date"></div>
-                <div class="lines"></div>
-            </div>
+        <div id="total-activity-graph" class="chart"></div>
+        <div id="graph-scale" class="key"></div>
+        <div class="hover">
+            <div class="date"></div>
+            <div class="lines"></div>
         </div>
     </div>
 
@@ -840,7 +834,7 @@
 
     function displayTotalActivity() {
 
-        var makeSVG = function(tag, attrs) {
+        var makeSVG = function(tag, attrs, innerHTML) {
             var el= document.createElementNS('http://www.w3.org/2000/svg', tag);
             for (var k in attrs){
                 if(k=="xlink:href"){
@@ -848,6 +842,9 @@
                 }else{
                     el.setAttribute(k, attrs[k]);
                 }
+            }
+            if (typeof innerHTML !== "undefined") {
+                el.innerHTML = innerHTML;
             }
             return el;
         };
@@ -864,16 +861,6 @@
                 scaleDiv.appendChild(domDiv);
             }
         };
-
-        var domTarget = document.getElementById("total-activity-graph");
-        var domSvg = makeSVG("svg", {
-            height: "275px",
-            "version": "1.1",
-            "xmlns": "http://www.w3.org/2000/svg",
-            "xmlns:xlink": "http://www.w3.org/1999/xlink",
-            "xmlns:data": "http://www.example.com/data"
-        });
-        domTarget.appendChild(domSvg);
 
         generateGraphKey();
 
@@ -896,6 +883,15 @@
             "stoke-width": 1,
             fill: "none",
             transform: "translate(0,152)"
+        });
+
+        // Create <g> item for labels
+        var svgLabels = makeSVG("g", {
+            "class":"labels",
+            stroke:"none",
+            "stroke-width":0,
+            fill:"black",
+            transform:"translate(0,111)"
         });
 
         // Loop over all days and build all graphs
@@ -934,7 +930,9 @@
                     y: 0,
                     width: 9,
                     height: Math.round((weekLines/myObject.MaxWeek.Lines) * 100),
-                    "data:lines": weekLines
+                    "data:lines": weekLines,
+                    "data:first": firstWeek,
+                    "data:last": lastWeek
                 }));
             }
 
@@ -953,6 +951,7 @@
                 cssClass = "scale-6";
             }
 
+            // Add heatmap item for day
             svgDays.appendChild(makeSVG("rect", {
                 x: x * 10,
                 y: y * 10,
@@ -962,17 +961,58 @@
                 "data:date": date.format("YYYY-MM-DD"),
                 "data:lines": item.Value
             }));
+
+            // Labels for April, July and October
+            var dateOfYear = date.format("DD-MM");
+            if (dateOfYear == "01-04" || dateOfYear == "01-07" || dateOfYear == "01-10") {
+                svgLabels.appendChild(makeSVG("line", {
+                    x1: (x * 10) + 4.5,
+                    y1: 0,
+                    x2: (x * 10) + 4.5,
+                    y2: 10,
+                    stroke: "#BBB",
+                    "stroke-width": 1
+                }));
+
+                svgLabels.appendChild(makeSVG("text", {
+                    x: (x * 10) + 4.5,
+                    y: 25,
+                    "text-anchor": "middle"
+                }, date.format("MMM")));
+
+                svgLabels.appendChild(makeSVG("line", {
+                    x1: (x * 10) + 4.5,
+                    y1: 30,
+                    x2: (x * 10) + 4.5,
+                    y2: 40,
+                    stroke: "#BBB",
+                    "stroke-width": 1
+                }));
+
+                // @todo add month labels (mx) for the month graph. Also work out how to include that all here
+            }
         }
+
+        var domTarget = document.getElementById("total-activity-graph");
+        var domSvg = makeSVG("svg", {
+            height: "275px",
+            width: ((x * 10) + 10) + "px",
+            "version": "1.1",
+            "xmlns": "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            "xmlns:data": "http://www.example.com/data"
+        });
 
         domSvg.appendChild(svgWeeks);
         domSvg.appendChild(svgDays);
+        domSvg.appendChild(svgLabels);
+        domTarget.appendChild(domSvg);
     }
 
     displayActiveUsers(10);
     displayTopUsers(10);
     displayShareOfActivity(9);
     displayTotalActivity();
-
 </script>
 </body>
 </html>
