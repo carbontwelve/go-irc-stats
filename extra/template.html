@@ -1017,6 +1017,16 @@
         domSvg.appendChild(svgLabels);
         domTarget.appendChild(domSvg);
 
+        // Add listener to week graph items
+        listenAll("#weeks rect", "mouseover", function (event) {
+            var lines = event.target.getAttribute("data:lines");
+            var first = event.target.getAttribute("data:first");
+            var last  = event.target.getAttribute("data:last");
+            insertHTML("#charts .hover .date", first + " – " + last);
+            insertHTML("#charts .hover .lines", numeral(lines).format("0,0") + " lines")
+        });
+
+        // Add listener to heat map items
         listenAll("#days rect",  "mouseover", function (event){ {
             var lines = event.target.getAttribute("data:lines");
             var date  = event.target.getAttribute("data:date");
