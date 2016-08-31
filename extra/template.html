@@ -852,18 +852,7 @@
             return el;
         };
 
-        var generateDaysGraphBar = function () {
-
-        };
-
-        var generateWeekGraphHeatMap = function () {
-
-        };
-
-        var generateGraphLabels = function () {
-
-        };
-
+        var heatMapScale = [];
         var generateGraphKey = function () {
             var scaleDiv = document.getElementById("graph-scale");
 
@@ -871,6 +860,7 @@
                 var domDiv = document.createElement("div");
                 domDiv.className = "scale-" + (i + 1);
                 domDiv.innerHTML = myObject.HeatMapInterval * i;
+                heatMapScale[i] = myObject.HeatMapInterval * i;
                 scaleDiv.appendChild(domDiv);
             }
         };
@@ -886,6 +876,96 @@
         domTarget.appendChild(domSvg);
 
         generateGraphKey();
+
+        var days = [];
+        var firstWeek = "", lastWeek = "", item, itemClass = "", date, x = 0, y = 0, mx = 0, weekLines = 0;
+
+        // Create <g> item for weeks
+        var svgWeeks = makeSVG("g", {
+            id: "weeks",
+            stroke: "none",
+            "stroke-width": 1,
+            fill: "#8495ab",
+            transform: "translate(0,110) scale(1,-1)"
+        });
+
+        // Create <g> item for days
+        var svgDays = makeSVG("g", {
+            id: "days",
+            stroke: "none",
+            "stoke-width": 1,
+            fill: "none",
+            transform: "translate(0,152)"
+        });
+
+        // Loop over all days and build all graphs
+        for (var i=0; i < myObject.Days.length; i++) {
+            item = myObject.Days[i];
+            date = moment(item.Date, "YYYY-DD-MM");
+            if (! date.isValid()) { continue; }
+
+            // Get the first week
+            if (i == 0) {
+                firstWeek = date.format("MMM-D");
+            }
+
+            // The Y axis on the heat map is the day of the week
+            y = date.format("e");
+
+            // If we are the first day of the week
+            if (y == 0) {
+                x += 1;
+                weekLines = 0;
+                firstWeek = date.format("MMM-D");
+            }
+
+            // If this is the first day of the month
+            if (date.format("D") == 1) {
+                mx++;
+            }
+
+            weekLines += item.Value;
+
+            // If we are the last day of the week then add bar to weeks graph
+            if (y == 6) {
+                lastWeek = date.format("MMM-D");
+                svgWeeks.appendChild(makeSVG("rect", {
+                    x: x * 10,
+                    y: 0,
+                    width: 9,
+                    height: Math.round((weekLines/myObject.MaxWeek.Lines) * 100),
+                    "data:lines": weekLines
+                }));
+            }
+
+            // Identify class for the heatmap
+            var classSet = false;
+            var cssClass = "";
+            for (var n = 0; n < heatMapScale.length; n++) {
+                if (item.Value <= heatMapScale[n]) {
+                    cssClass = "scale-" + (n+1);
+                    classSet = true;
+                    break;
+                }
+            }
+
+            if (classSet == false) {
+                cssClass = "scale-6";
+            }
+
+            svgDays.appendChild(makeSVG("rect", {
+                x: x * 10,
+                y: y * 10,
+                width: 9,
+                height: 9,
+                "class": cssClass,
+                "data:date": date.format("YYYY-MM-DD"),
+                "data:lines": item.Value
+            }));
+        }
+
+        domSvg.appendChild(svgWeeks);
+        domSvg.appendChild(svgDays);
     }
 
     displayActiveUsers(10);
