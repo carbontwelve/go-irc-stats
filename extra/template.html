@@ -859,6 +859,7 @@
         // Init variables for this scope
         var heatMapScale = [];
         var days = [];
+        var dayOfWeek = [];
         var firstWeek = "", lastWeek = "", item, itemClass = "", date, x = 0, y = 0, mx = 0, weekLines = 0;
         var hourLabels = [
             { x: 0, y: 0, htmlContent: "A"},
@@ -946,10 +947,17 @@
 
         // Loop over all days and build Total activity graph and Most active day of week graph
         var parseDays = function() {
-            for (var i=0; i < myObject.Days.length; i++) {
+            var i;
+            for (i=0; i < myObject.Days.length; i++) {
                 item = myObject.Days[i];
                 date = moment(item.Date, "YYYY-DD-MM");
                 if (! date.isValid()) { continue; }
+
+                if (dayOfWeek[date.format("e")] > 0) {
+                    dayOfWeek[date.format("e")] += item.Value;
+                }else{
+                    dayOfWeek[date.format("e")] = item.Value;
+                }
 
                 // Get the first week
                 if (i == 0) {
@@ -1042,6 +1050,17 @@
 
                     // @todo add month labels (mx) for the month graph. Also work out how to include that all here
                 }
+            }
+
+            // Now that dayOfWeek has been generated we can fill svgWeekDays
+            for (i=0; i < dayOfWeek.length; i++) {
+                svgWeekDays.appendChild(makeSVG("rect", {
+                    x: i * 10,
+                    y: 0,
+                    width: 9,
+                    height: Math.round((dayOfWeek[i]/myObject.MaxWeekDay.Lines) * 100),
+                    "data:lines": dayOfWeek[i]
+                }));
             }
         };
 
