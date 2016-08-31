@@ -860,6 +860,49 @@
         var heatMapScale = [];
         var days = [];
         var firstWeek = "", lastWeek = "", item, itemClass = "", date, x = 0, y = 0, mx = 0, weekLines = 0;
+        var hourLabels = [
+            { x: 0, y: 0, htmlContent: "A"},
+            { x: 40, y: 0, htmlContent: "4"},
+            { x: 80, y: 0, htmlContent: "8"},
+            { x: 120, y: 0, htmlContent: "P"},
+            { x: 160, y: 0, htmlContent: "4"},
+            { x: 200, y: 0, htmlContent: "8"}
+        ];
+        var weekLabels = [
+            { x: 10, y: 0, htmlContent: "M"},
+            { x: 30, y: 0, htmlContent: "W"},
+            { x: 50, y: 0, htmlContent: "F"}
+        ];
+
+        // Create <g> item for hours
+        var svgHours = makeSVG("g", {
+            id: "hours",
+            stroke: "none",
+            "stroke-width": 1,
+            "fill": "#8495ab",
+            "transform": "translate(0,100) scale(1,-1)"
+        });
+
+        // Create <g> item for hours labels
+        var svgHoursLabels = makeSVG("g", {
+            "class":"labels",
+            transform:"translate(0,115)"
+        });
+
+        // Create <g> item for week days
+        var svgWeekDays = makeSVG("g", {
+            id:"weekdays",
+            stroke:"none",
+            "stroke-width":"1",
+            fill:"#8495ab",
+            transform:"translate(270,100) scale(1,-1)"
+        });
+
+        // Create <g> item for week day labels
+        var svgWeekDaysLabels = makeSVG("g", {
+            "class":"labels",
+            transform:"translate(270,115)"
+        });
 
         // Create <g> item for weeks
         var svgWeeks = makeSVG("g", {
@@ -1002,8 +1045,25 @@
             }
         };
 
+        // Loop over all hours and build hourly graph
+        var parseHours = function () {
+
+        };
+
+        var generateMostActiveTimesLabels = function(target, data){
+            for (var i = 0; i < data.length; i++) {
+                target.appendChild(makeSVG("text", {
+                    x: data[i].x,
+                    y: data[i].y,
+                }, data[i].htmlContent))
+            }
+        };
+
+        generateMostActiveTimesLabels(svgHoursLabels, hourLabels);
+        generateMostActiveTimesLabels(svgWeekDaysLabels, weekLabels);
         generateGraphKey();
         parseDays();
+        parseHours();
 
         //
         // Write Activity Graph
@@ -1036,7 +1096,16 @@
             "xmlns:data": "http://www.example.com/data"
         });
 
+        activeTimesChartDomSvg.appendChild(svgHours);
+        activeTimesChartDomSvg.appendChild(svgHoursLabels);
+        activeTimesChartDomSvg.appendChild(svgWeekDays);
+        activeTimesChartDomSvg.appendChild(svgWeekDaysLabels);
+
         activeTimesChartDomTarget.appendChild(activeTimesChartDomSvg);
+
+        //
+        // Adding Event Listeners
+        //
 
         // Add listener to week graph items
         listenAll("#weeks rect", "mouseover", function (event) {
