@@ -1,5 +1,7 @@
 package ircstats
 
+import "time"
+
 type Seen struct {
 	FirstSeen int64
 	LastSeen  int64
@@ -61,6 +63,21 @@ func (s HoursAndDaysStats) FindPeakDay() (date string, total int64) {
 		if t > total {
 			date = d
 			total = t
+		}
+	}
+	return
+}
+
+func (s HoursAndDaysStats) FindPeakWeekDay() (weekday int64, total int64 ) {
+	var weekDays [7]int64
+	for d, t := range s.Days {
+		dTime, _ := time.Parse("2006-02-01", d);
+		weekDays[dTime.Weekday()] += t
+	}
+	for d, m := range weekDays {
+		if (m > total){
+			total = m;
+			weekday = int64(d);
 		}
 	}
 	return

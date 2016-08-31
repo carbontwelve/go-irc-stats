@@ -75,6 +75,7 @@ type JsonData struct {
 
 					      // Counters
 	MaxDay            MaxDay              // Calculated Max Day
+	MaxWeekDay        MaxWeekDay          // Calculated Max Week Day
 	MaxHour           MaxHour             // Calculated Max Hour
 	MaxWeek           MaxWeek             // Calculated Max Week
 	TotalLines        int64               // Lines parsed in total
@@ -156,6 +157,9 @@ func (j JsonData) Debug() {
 	fmt.Printf("Total Unique Users:\t\t\t\t%d\n", j.TotalUsers)
 	fmt.Printf("Users Active in past %d days:\t%d\n", j.ActivityPeriod, j.TotalActiveUsers)
 
+	fmt.Printf("Peak Day of Week:\t\t\t\t%d\n", j.MaxWeekDay.DayOfWeek)
+	fmt.Printf("Peak Day of Week Lines:\t\t\t%d\n", j.MaxWeekDay.Lines)
+
 	fmt.Printf("Peak Day Date:\t\t\t\t\t%s\n", j.MaxDay.Day)
 	fmt.Printf("Peak Day Lines:\t\t\t\t\t%d\n", j.MaxDay.Lines)
 
@@ -180,6 +184,7 @@ func (vd *ViewData) Calculate(db Database) {
 	vd.JsonData.MaxDay.Day, vd.JsonData.MaxDay.Lines = db.Channel.FindPeakDay()
 	vd.JsonData.MaxHour.Hour, vd.JsonData.MaxHour.Lines = db.Channel.FindPeakHour()
 	vd.JsonData.MaxWeek.Week, vd.JsonData.MaxWeek.Lines = db.Channel.FindPeakWeek()
+	vd.JsonData.MaxWeekDay.DayOfWeek, vd.JsonData.MaxWeekDay.Lines = db.Channel.FindPeakWeekDay()
 	vd.JsonData.TotalLines = db.Channel.LineCount
 	vd.JsonData.TotalWords = db.Channel.WordCount
 

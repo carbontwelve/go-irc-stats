@@ -1,5 +1,10 @@
 package ircstats
 
+type MaxWeekDay struct {
+	DayOfWeek int64
+	Lines     int64
+}
+
 type MaxWeek struct {
 	Week  int64
 	Lines int64
@@ -26,15 +31,15 @@ type Averages struct {
 // Channel Statistics
 //
 type Channel struct {
-	Name              string          // Channel Name
-	ActiveUsers       map[string]User // Active users in past 30 days
-	UserCount         int64           // Total Number of users in Channel
-	LineCount         int64           // Total Number of lines in Channel
-	WordCount         int64           // Total Word count for Channel
-	MaxDay            MaxDay          // Calculated Max Day
-	MaxHour           MaxHour         // Calculated Max Hour
-	MaxWeek           MaxWeek         // Calculated Max Week
-	Averages          Averages        // Calculated Averages
-	HoursAndDaysStats                 // Inherited Hour And Days methods
-	Seen                              // First & Last Seen
+	Name        string          // Channel Name
+	ActiveUsers map[string]User // Active users in past 30 days
+	UserCount   int64           // Total Number of users in Channel
+	LineCount   int64           // Total Number of lines in Channel
+	WordCount   int64           // Total Word count for Channel
+	MaxDay      MaxDay          // Calculated Max Day
+	MaxHour     MaxHour         // Calculated Max Hour
+	MaxWeek     MaxWeek         // Calculated Max Week
+	Averages    Averages        // Calculated Averages
+	HoursAndDaysStats           // Inherited Hour And Days methods
+	Seen                        // First & Last Seen
 }
