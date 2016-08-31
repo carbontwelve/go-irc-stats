@@ -532,9 +532,7 @@
 
     <h2>Most Active Times</h2>
     <div id="hourly">
-        <div class="chart">
-            ### todo add svg ###
-        </div>
+        <div id="active-times-graph" class="chart"></div>
         <div class="hover">
             <div class="timezone-label">UTC</div>
             <div class="lines"></div>
@@ -858,21 +856,8 @@
     }
 
     function displayTotalActivity() {
+        // Init variables for this scope
         var heatMapScale = [];
-        var generateGraphKey = function () {
-            var scaleDiv = document.getElementById("graph-scale");
-
-            for (var i = 0; i <= 5; i++) {
-                var domDiv = document.createElement("div");
-                domDiv.className = "scale-" + (i + 1);
-                domDiv.innerHTML = myObject.HeatMapInterval * i;
-                heatMapScale[i] = myObject.HeatMapInterval * i;
-                scaleDiv.appendChild(domDiv);
-            }
-        };
-
-        generateGraphKey();
-
         var days = [];
         var firstWeek = "", lastWeek = "", item, itemClass = "", date, x = 0, y = 0, mx = 0, weekLines = 0;
 
@@ -903,107 +888,128 @@
             transform:"translate(0,111)"
         });
 
-        // Loop over all days and build all graphs
-        for (var i=0; i < myObject.Days.length; i++) {
-            item = myObject.Days[i];
-            date = moment(item.Date, "YYYY-DD-MM");
-            if (! date.isValid()) { continue; }
+        // Generate heatmap key and fill heatMapScale array
+        var generateGraphKey = function () {
+            var scaleDiv = document.getElementById("graph-scale");
 
-            // Get the first week
-            if (i == 0) {
-                firstWeek = date.format("MMM-D");
+            for (var i = 0; i <= 5; i++) {
+                var domDiv = document.createElement("div");
+                domDiv.className = "scale-" + (i + 1);
+                domDiv.innerHTML = myObject.HeatMapInterval * i;
+                heatMapScale[i] = myObject.HeatMapInterval * i;
+                scaleDiv.appendChild(domDiv);
             }
+        };
 
-            // The Y axis on the heat map is the day of the week
-            y = date.format("e");
+        // Loop over all days and build Total activity graph and Most active day of week graph
+        var parseDays = function() {
+            for (var i=0; i < myObject.Days.length; i++) {
+                item = myObject.Days[i];
+                date = moment(item.Date, "YYYY-DD-MM");
+                if (! date.isValid()) { continue; }
 
-            // If we are the first day of the week
-            if (y == 0) {
-                x += 1;
-                weekLines = 0;
-                firstWeek = date.format("MMM-D");
-            }
+                // Get the first week
+                if (i == 0) {
+                    firstWeek = date.format("MMM-D");
+                }
 
-            // If this is the first day of the month
-            if (date.format("D") == 1) {
-                mx++;
-            }
+                // The Y axis on the heat map is the day of the week
+                y = date.format("e");
 
-            weekLines += item.Value;
+                // If we are the first day of the week
+                if (y == 0) {
+                    x += 1;
+                    weekLines = 0;
+                    firstWeek = date.format("MMM-D");
+                }
 
-            // If we are the last day of the week then add bar to weeks graph
-            if (y == 6) {
-                lastWeek = date.format("MMM-D");
-                svgWeeks.appendChild(makeSVG("rect", {
+                // If this is the first day of the month
+                if (date.format("D") == 1) {
+                    mx++;
+                }
+
+                weekLines += item.Value;
+
+                // If we are the last day of the week then add bar to weeks graph
+                if (y == 6) {
+                    lastWeek = date.format("MMM-D");
+                    svgWeeks.appendChild(makeSVG("rect", {
+                        x: x * 10,
+                        y: 0,
+                        width: 9,
+                        height: Math.round((weekLines/myObject.MaxWeek.Lines) * 100),
+                        "data:lines": weekLines,
+                        "data:first": firstWeek,
+                        "data:last": lastWeek
+                    }));
+                }
+
+                // Identify class for the heatmap
+                var classSet = false;
+                var cssClass = "";
+                for (var n = 0; n < heatMapScale.length; n++) {
+                    if (item.Value <= heatMapScale[n]) {
+                        cssClass = "scale-" + (n+1);
+                        classSet = true;
+                        break;
+                    }
+                }
+
+                if (classSet == false) {
+                    cssClass = "scale-6";
+                }
+
+                // Add heatmap item for day
+                svgDays.appendChild(makeSVG("rect", {
                     x: x * 10,
-                    y: 0,
+                    y: y * 10,
                     width: 9,
-                    height: Math.round((weekLines/myObject.MaxWeek.Lines) * 100),
-                    "data:lines": weekLines,
-                    "data:first": firstWeek,
-                    "data:last": lastWeek
+                    height: 9,
+                    "class": cssClass,
+                    "data:date": date.format("YYYY-MM-DD"),
+                    "data:lines": item.Value
                 }));
-            }
 
-            // Identify class for the heatmap
-            var classSet = false;
-            var cssClass = "";
-            for (var n = 0; n < heatMapScale.length; n++) {
-                if (item.Value <= heatMapScale[n]) {
-                    cssClass = "scale-" + (n+1);
-                    classSet = true;
-                    break;
+                // Labels for April, July and October
+                var dateOfYear = date.format("DD-MM");
+                if (dateOfYear == "01-04" || dateOfYear == "01-07" || dateOfYear == "01-10") {
+                    svgLabels.appendChild(makeSVG("line", {
+                        x1: (x * 10) + 4.5,
+                        y1: 0,
+                        x2: (x * 10) + 4.5,
+                        y2: 10,
+                        stroke: "#BBB",
+                        "stroke-width": 1
+                    }));
+
+                    svgLabels.appendChild(makeSVG("text", {
+                        x: (x * 10) + 4.5,
+                        y: 25,
+                        "text-anchor": "middle"
+                    }, date.format("MMM")));
+
+                    svgLabels.appendChild(makeSVG("line", {
+                        x1: (x * 10) + 4.5,
+                        y1: 30,
+                        x2: (x * 10) + 4.5,
+                        y2: 40,
+                        stroke: "#BBB",
+                        "stroke-width": 1
+                    }));
+
+                    // @todo add month labels (mx) for the month graph. Also work out how to include that all here
                 }
             }
+        };
 
-            if (classSet == false) {
-                cssClass = "scale-6";
-            }
+        generateGraphKey();
+        parseDays();
 
-            // Add heatmap item for day
-            svgDays.appendChild(makeSVG("rect", {
-                x: x * 10,
-                y: y * 10,
-                width: 9,
-                height: 9,
-                "class": cssClass,
-                "data:date": date.format("YYYY-MM-DD"),
-                "data:lines": item.Value
-            }));
-
-            // Labels for April, July and October
-            var dateOfYear = date.format("DD-MM");
-            if (dateOfYear == "01-04" || dateOfYear == "01-07" || dateOfYear == "01-10") {
-                svgLabels.appendChild(makeSVG("line", {
-                    x1: (x * 10) + 4.5,
-                    y1: 0,
-                    x2: (x * 10) + 4.5,
-                    y2: 10,
-                    stroke: "#BBB",
-                    "stroke-width": 1
-                }));
-
-                svgLabels.appendChild(makeSVG("text", {
-                    x: (x * 10) + 4.5,
-                    y: 25,
-                    "text-anchor": "middle"
-                }, date.format("MMM")));
-
-                svgLabels.appendChild(makeSVG("line", {
-                    x1: (x * 10) + 4.5,
-                    y1: 30,
-                    x2: (x * 10) + 4.5,
-                    y2: 40,
-                    stroke: "#BBB",
-                    "stroke-width": 1
-                }));
-
-                // @todo add month labels (mx) for the month graph. Also work out how to include that all here
-            }
-        }
-
-        var domTarget = document.getElementById("total-activity-graph");
-        var domSvg = makeSVG("svg", {
+        //
+        // Write Activity Graph
+        //
+        var activityChartDomTarget = document.getElementById("total-activity-graph");
+        var activityChartDomSvg = makeSVG("svg", {
             height: "275px",
             width: ((x * 10) + 10) + "px",
             "version": "1.1",
@@ -1012,10 +1018,25 @@
             "xmlns:data": "http://www.example.com/data"
         });
 
-        domSvg.appendChild(svgWeeks);
-        domSvg.appendChild(svgDays);
-        domSvg.appendChild(svgLabels);
-        domTarget.appendChild(domSvg);
+        activityChartDomSvg.appendChild(svgWeeks);
+        activityChartDomSvg.appendChild(svgDays);
+        activityChartDomSvg.appendChild(svgLabels);
+        activityChartDomTarget.appendChild(activityChartDomSvg);
+
+        //
+        // Write Days of week Graph
+        //
+        var activeTimesChartDomTarget = document.getElementById("active-times-graph");
+        var activeTimesChartDomSvg = makeSVG("svg", {
+            width: "340px",
+            height: "170px",
+            version: "1.1",
+            "xmlns": "http://www.w3.org/2000/svg",
+            "xmlns:xlink": "http://www.w3.org/1999/xlink",
+            "xmlns:data": "http://www.example.com/data"
+        });
+
+        activeTimesChartDomTarget.appendChild(activeTimesChartDomSvg);
 
         // Add listener to week graph items
         listenAll("#weeks rect", "mouseover", function (event) {
