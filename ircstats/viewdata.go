@@ -40,25 +40,12 @@ type TimeZone struct {
 	Offset int
 }
 
-// Data mapping for passing week date data to front end JSON
-// This is used for the by week bar graph
-type SvgGraphWeek struct {
-	First string // Week beginning date e.g June 12
-	Last  string // Week ending date e.g June 18
-	Value int64  // e.g. Lines
-}
-
 // Data mapping for passing day date data to front end JSON
 // This is used for the heatmap
 type SvgGraphDay struct {
 	Date  string
 	Value int64 // e.g. Lines
 }
-
-//type GraphData struct {
-//	Days  []SvgGraphDay
-//Weeks []SvgGraphWeek
-//}
 
 func (tz TimeZone) Format() string {
 	var output string
@@ -204,14 +191,8 @@ func (vd *ViewData) Calculate(db Database) {
 	// Calculate Users
 	vd.calculateUsers(db)
 
-	// @todo Format data for Graph Usage
-	// loop one day each between vd.JsonData.FirstSeen and vd.JsonData.LastSeen
-
 	// Calculate Date Data for graphs
 	vd.calculateDateData(db);
-
-	//vd.JsonData.Days = append(vd.JsonData.Days, GraphDay{Date: dt, Value: 0})
-
 }
 
 func (vd *ViewData) calculateDateData(db Database) {
