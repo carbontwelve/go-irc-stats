@@ -2,7 +2,6 @@
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/carbontwelve/go-irc-stats)](https://goreportcard.com/report/github.com/carbontwelve/go-irc-stats)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE)
-[![ghit.me](https://ghit.me/badge.svg?repo=carbontwelve/go-irc-stats)](https://ghit.me/repo/carbontwelve/go-irc-stats)
 
 This is an attempted port of the Ruby based IRC stats generator [0x263b/Stats](https://github.com/0x263b/Stats) by [Abram Kash](https://kash.im/). At time of writing I knew neither Ruby nor Golang and this has been an excuse in learning more about both.
 
